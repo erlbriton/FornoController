@@ -1,0 +1,58 @@
+/*
+ * mode.h
+ *
+ *  Created on: 8 февр. 2023 г.
+ *      Author: erlbriton
+ */
+
+#ifndef INC_MODE_H_
+#define INC_MODE_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "flashdata.hpp"
+
+extern vu8 flagSoundButton[];
+void countMode(void);
+vu8 timeIncrement(void);
+vu8 readFlash(void);
+void fram_wr_massive(uint8_t*, uint16_t, uint8_t, uint8_t);
+uint8_t fram_rd_massive(uint8_t*, uint16_t, uint8_t, uint8_t);
+int all_off_but_fan(void);
+void over_temper(void);
+void all_off(void);
+//int modeWrite(void);
+vu8 readFram(void);
+uint16_t time_set(void);
+void pass(ModeCook);
+void timeDecrement(void);
+vu8 readButton(void);
+void ajustHeat(ModeCook);
+uint8_t framRD0byte(void);//Читаем нулевой байт из основного сектора FRAM
+void spOn1(void);
+void timeCount(void);
+uint16_t  readAdc(uint8_t);
+void setOutCooler(void);
+void onWhatchDog(void);
+uint16_t addTemp(void);
+void soundMatch(void);
+void TransmitToTENs(vu8 fry);
+void scanButton(void);
+void spOn(void);
+void ajustHeat595(void);
+
+//extern const uint8_t rawADC[];
+//extern const uint8_t rawADC1[37];
+
+
+
+typedef enum {
+	incr = 1,
+	decr = -1
+} incrDecr;
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* INC_MODE_H_ */
