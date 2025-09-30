@@ -206,7 +206,6 @@ Control control;
 FryModeLambda fryModeLambda;
 
 //MelodyPlayer::playPodmoskovnye();
-int a;
 
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
