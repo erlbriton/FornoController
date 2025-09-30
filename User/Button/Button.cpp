@@ -38,7 +38,7 @@ void Button::buttonRegimOne() {
 	flagSoundButton[2] = 0);
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 bool isSettedMode = (settedMode == set || settedMode == light);
-isSettedMode && (buttonRegim = 2);
+isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonRegim  сразу =2(время выставлять не нужно)
 	zeroing(); //Обнуляем все необходимые флаги
 	GPIOA->BSRR |= GPIO_PIN_12;
 	pass3Button = false; //Обнуляем флаг прохода режима 3 кнопки(для режима "PRE")
@@ -48,10 +48,10 @@ isSettedMode && (buttonRegim = 2);
 //-----------------------Второй режим кнопки----------------------------
 void Button::buttonRegimTwo() {//Проверка выключенного режима Pre
     vu8 settedMode = Fram::elementFram(1);
-    (settedMode == pre) && (buttonRegim = 2) || (executeMainRegimLogic(), true);
+   ( (settedMode == pre) && (buttonRegim = 2)) || (executeMainRegimLogic(), true);//Если режим "pre", то сразу прыгаем во 2-й режим кнопки(время выставлять не нужно)
 }
 bool Button::executeMainRegimLogic() {//Метод второго и следующих проходов
-    firstCall && (TIM2->CNT = 0); // Первый проход
+    if (firstCall) TIM2->CNT = 0;// Первый проход
     bool isFlagSoundButton = (flagSoundButton[1] != true);
     isFlagSoundButton && (Heat::spOn(), flagSoundButton[1] = 1, flagSoundButton[2] = 0);
     pass3Button = false;
@@ -153,7 +153,7 @@ vu8 Button::encCount() {
 					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[18] =151, // Записываем в массив для передачи в дисплей по RS-485
 					buf_485[8] = byte0Fram % 100 % 10, // Единицы
 					buf_485[9] = byte0Fram % 100 / 10,    // Десятки
-					buf_485[10] = byte0Fram / 100             // Сотни
+					(buf_485[10] = byte0Fram / 100)          // Сотни
 					)), __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
 	NVIC_ClearPendingIRQ(EXTI2_IRQn),      // Очищаем бит NVIC_ICPRx
 	HAL_NVIC_EnableIRQ(EXTI2_IRQn),        // Включаем внешнее прерывание
