@@ -20,6 +20,7 @@ class TimerManager {// Класс для обработки таймеров
 public:
     void handleTimerInterrupt(TIM_HandleTypeDef* htim);
 private:
+    void handleTIM4();
     void handleTIM9();
     void handleTIM7();
     void handleTIM12();
@@ -48,5 +49,6 @@ public:
 private:
     void handleGPIO2();
     void handleGPIO14();
+    void handleGPIO15();
 };
 #endif /* CALLBACKS_HPP_ */

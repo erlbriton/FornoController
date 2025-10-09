@@ -30,6 +30,7 @@ void ADCManager::handleADCConversionComplete(ADC_HandleTypeDef* hadc) {
 
 // Массив структур, которые связывают таймеры и их обработчики
 const TimerManager::TimerMap TimerManager::timerMap[ ] = {
+	{ TIM4, &TimerManager::handleTIM4 },
     { TIM5, &TimerManager::handleTIM5 },
     { TIM6, &TimerManager::handleTIM6 },
     { TIM7, &TimerManager::handleTIM7 },
@@ -54,6 +55,12 @@ void TimerManager::handleTimerInterrupt(TIM_HandleTypeDef* htim) {
     }
 }
 // Реализация обработчиков
+void TimerManager::handleTIM4() {
+	EXTI->IMR |= EXTI_IMR_MR15;//Разрешаем прерывание EXTI15
+	//
+	//
+	EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
+}
 void TimerManager::handleTIM9() {
     num = 1 - num;
     TIM7->CR1 = TIM7->CR1 + recount[num]; // Пуск/стоп TIM7
@@ -114,6 +121,10 @@ void EXTIManager::handleGPIO14() {
 	                    (Fram::framRD0byte() - Control::ovenTemper < Heat::HysteresisTemp()) &&
 	                    (Fram::framRD0byte() - Control::ovenTemper > 0);
 }
+void EXTIManager::handleGPIO15() {
+
+}
+
 
 //---------------------Колбеки-----------------------------
 ADCManager adcManager;

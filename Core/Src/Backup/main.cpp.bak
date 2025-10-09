@@ -17,7 +17,6 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <melody_gpio.hpp>
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
@@ -206,10 +205,10 @@ Button button;
 Control control;
 FryModeLambda fryModeLambda;
 
-//MelodyPlayer::playPodmoskovnye();
+MelodyPlayer::playPodmoskovnye();
 
 while (1) {
-			uint16_t modeCookAveADC = control.readAdc(3);//Читаем задатчик режима
+			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
 			Fram::elementFram(1, modeCookAveADC);
 			Button::encCount();//Задаем температуру
@@ -299,8 +298,6 @@ while (1) {
 }
   /* USER CODE END Error_Handler_Debug */
 }
-
-
 
 #ifdef  USE_FULL_ASSERT
 /**

@@ -115,6 +115,7 @@ int main(void)
   MX_IWDG_Init();
   MX_ADC2_Init();
   MX_TIM11_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 	LL_SPI_Enable(SPI3);
 	//---------------------Сброс HC595--------------------------------
@@ -205,7 +206,10 @@ Button button;
 Control control;
 FryModeLambda fryModeLambda;
 
-//MelodyPlayer::playPodmoskovnye();
+MelodyPlayer::playPodmoskovnye();
+
+EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
+//EXTI->IMR |= EXTI_IMR_MR15;//Разрешаем прерывание EXTI15
 
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
