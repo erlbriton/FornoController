@@ -102,6 +102,7 @@ const std::array<std::function<void(Button*)>, 3> Button::arrButtonRegim = {
 };
 //-------------------------------------Выбор режима кнопки-------------------------------------------
 bool Button::executeButtonRegim(vu8 index)  {
+	//(index >= 0 && index < arrButtonRegim.size()) && arrButtonRegim[index](this);//Нужно попробовать такой вид
     if (index >= 0 && index < arrButtonRegim.size()) {
         arrButtonRegim[index](this); //Передаём `this` в лямбду
     }
@@ -139,12 +140,12 @@ void Button::zeroing() {
 	buf_485[14] = 0; //Стираем огонь
 	buf_485[15] = 0; //Стираем огонь
 }
-
+//----------------------------------------------------------------Задаем температуру-----------------------------------------------------------------------
 vu8 Button::encCount() {
-	vu8 settedMode = Fram::elementFram(1); // Читаем устaновленный режим
+	vu8 settedMode = Fram::elementFram(1); // Читаем устaновленный режим из Fram
 	vu8 byte0Fram = 0;
 	(buttonRegim != 1) && (cntEncoder = TIM2->CNT, // Количество импульсов, посчитанных энкодером
-	(encMemory != cntEncoder && encDone == true) && ( // Если данные изменились — пишем в индикатор и FRAM
+	(encMemory != cntEncoder && encDone == true) && ( // Если данные изменились и был поворот энкодера — пишем в индикатор и FRAM
 			encMemory = cntEncoder, // Запоминаем значение, посчитанное энкодером, чтобы было с чем сравнивать
 			Fram::elementFram(0, cntEncoder), // Записываем в массив для FRAM значение счётчика энкодера
 			Fram::fram_wr_massive(), // Записываем массив во FRAM
@@ -159,7 +160,7 @@ vu8 Button::encCount() {
 	HAL_NVIC_EnableIRQ(EXTI2_IRQn),        // Включаем внешнее прерывание
 	encDone = false               // Обнуляем флаг прокрутки
 			);
-	return cntEncoder; //Если нет - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
+	return cntEncoder; //Если данные не изменились или не было поворота энкодера - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
 }
 
 //------------------------------------Геттеры и сеттеры----------------------------------------------

@@ -46,25 +46,25 @@ void FryModeLambda::modeWrite(vu8 modeCookAveADC) {
 }
 //-----------------------------------------Методы режимов(массив лямбда функций)----------------------------------------------
 const std::array<std::function<void(FryModeLambda*)>, 6> FryModeLambda::modeCookLambdaArray =
-		//----------------------------------------------Off--------------------------------------------------------------------------
+		//--------------------------------------------0  -  Off--------------------------------------------------------------------------
 		{ [ ](FryModeLambda* fryModeLambda) {
 			Heat::spOn();//Звук
 			Heat::all_off(); // Выключаем все тены
 			GPIOA->BSRR |= GPIO_PIN_12 << 16U; // Свет выкл
 			buf_485[11] = settedMode;//Off
 		},
-//----------------------------------------------------Pre----------------------------------------------------------------------------
+//----------------------------------------------------1 - Pre----------------------------------------------------------------------------
 		[ ](FryModeLambda* fryModeLambda) {
 			fryModeLambda->firstRegim(firstTemp);
 			HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
 			HAL_TIM_Base_Stop_IT(&htim10);
 			buf_485[11] = settedMode; // Pre
 		},
-		//---------------------------------------------Dry----------------------------------------------------------------------------------
+		//---------------------------------------------2 - Dry----------------------------------------------------------------------------------
 		[ ](FryModeLambda* fryModeLambda) {
 			fryModeLambda->modeCom(settedMode, fryModeLambda->firstTempDry);//Dry
 		},
-		//----------------------------------------------Set----------------------------------------------------------------------------------
+		//----------------------------------------------3 - Set----------------------------------------------------------------------------------
 		[ ](FryModeLambda* fryModeLambda) {//Set
 			Heat::all_off(); //Выключаем все
 			//HAL_GPIO_WritePin(fanOut, GPIO_PIN_RESET);
@@ -73,12 +73,12 @@ const std::array<std::function<void(FryModeLambda*)>, 6> FryModeLambda::modeCook
 			HAL_TIM_Base_Stop_IT(&htim10);
 			plateTemp();
 		},
-		//-------------------------Grill---Brow---Fan---Ff---Ord---Cook-----------------------------------------------
+		//-------------------------4 - Grill---Brow---Fan---Ff---Ord---Cook-----------------------------------------------
 		[ ](FryModeLambda *fryModeLambda) {
 			fryModeLambda->modeCom(settedMode, fryModeLambda->firstTemp);
 			buf_485[11] = settedMode;
 		},
-        //--------------------------------------------------Light------------------------------------------------------------------
+        //--------------------------------------------------5 - Light------------------------------------------------------------------
 		[ ](FryModeLambda *fryModeLambda) {
 			Heat::all_off(); //Выключаем все
 			fryModeLambda->firstRegim(fryModeLambda->firstTemp);
@@ -93,7 +93,7 @@ vu8 FryModeLambda::ModeSetLambda(vu8 modeCookNew) {
 	buf_485[11] = modeCookNew;
 	ModeSetLambda(modeCookLambdaArray[indexSet], modeCookNew); // Передаем лямбду по индексу
 	modeCookOld = modeCookNew;
-	return modeCookNew;
+	return modeCookNew;//Номер режима приготовления
 }
 //Вызываем лямбду, переданную как параметр
 void FryModeLambda::ModeSetLambda(std::function<void(FryModeLambda*)> lambda, vu8 modeCookNew) {

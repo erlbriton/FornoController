@@ -214,7 +214,7 @@ EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
-			Fram::elementFram(1, modeCookAveADC);
+			Fram::elementFram(1, modeCookAveADC);//Возможно эта строка не нужна, так как это уже делается в методе  "control.readAdc(1);"(проверить)
 			Button::encCount();//Задаем температуру
 			(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера

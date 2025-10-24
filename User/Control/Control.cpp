@@ -48,7 +48,7 @@ vu16 Control::readAdc(uint8_t numSamples) {
     if (averageAdc >= sizeof(rawADC) / sizeof(rawADC[0])) {// Проверяем, не выходим ли за границы массива rawADC
         return 0; // Ошибка
     }
-     Fram::elementFram(1, rawADC[averageAdc]);
+     Fram::elementFram(1, rawADC[averageAdc]);//Записываем во Fram по адресу "1" номер режима
     return rawADC[averageAdc]; // Возвращаем номер режима
 }
 //---------------------------Восстановление информации после сброса или отключения------------------------
