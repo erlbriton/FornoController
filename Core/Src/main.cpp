@@ -78,7 +78,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-//Test Git
+//Добавил комментарии
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
