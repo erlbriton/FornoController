@@ -102,7 +102,7 @@ void TimerManager::handleTIM6() {
 	(Control::ovenTemper >= Heat::tempMax) && (Button::regim1Button(), 0);
 }
 void TimerManager::handleTIM5() {
-    // Логика для TIM5
+	Protection::TIM5_Handler();
 }
 void TimerManager::handleTIM11() {
 	MelodyPlayer::handleTimerInterrupt();
@@ -122,7 +122,7 @@ void EXTIManager::handleGPIO14() {
 	                    (Fram::framRD0byte() - Control::ovenTemper > 0);
 }
 void EXTIManager::handleGPIO15() {
-
+	Protection::EXTI_Handler();
 }
 
 

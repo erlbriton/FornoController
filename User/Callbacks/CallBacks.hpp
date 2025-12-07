@@ -10,6 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "FryMode.hpp"
+#include "Protection.hpp"
 #include <array>
 
 class ADCManager {// Класс для обработки ADC

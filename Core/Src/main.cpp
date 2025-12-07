@@ -116,6 +116,7 @@ int main(void)
   MX_ADC2_Init();
   MX_TIM11_Init();
   MX_TIM4_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 	LL_SPI_Enable(SPI3);
 	//---------------------Сброс HC595--------------------------------
@@ -217,6 +218,7 @@ while (1) {
 			Fram::elementFram(1, modeCookAveADC);//Возможно эта строка не нужна, так как это уже делается в методе  "control.readAdc(1);"(проверить)
 			Button::encCount();//Задаем температуру
 			(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
+
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей
@@ -302,8 +304,7 @@ while (1) {
 }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

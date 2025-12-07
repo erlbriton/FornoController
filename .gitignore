@@ -17,6 +17,7 @@
 *.log
 *.swp
 *.swo
+*.bak
 
 # Генерация кода CubeMX (файл ioc можно хранить!)
 /MXGenerated/
@@ -24,3 +25,10 @@
 # Системные файлы ОС
 .DS_Store
 Thumbs.db
+
+#Драйверы
+/Drivers/
+/FornoAD2/
+/Core/Startup/
+/Core/Src/Backup/
+/Core/Inc/Backup/

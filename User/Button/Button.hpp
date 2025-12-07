@@ -11,6 +11,7 @@
 #include "main.h"
 #include "flashdata.hpp"
 #include "functional"
+#include "Protection.hpp"
 //#include "Control.hpp"
 //#include "Heat.hpp"
 

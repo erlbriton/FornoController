@@ -44,6 +44,7 @@ isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonReg
 	pass3Button = false; //Обнуляем флаг прохода режима 3 кнопки(для режима "PRE")
 	HAL_TIM_Base_Stop_IT(&htim10);
 	flagOneButton = true;
+	Protection::Start();//Запускаем проверку тока в тенах
 }
 //-----------------------Второй режим кнопки----------------------------
 void Button::buttonRegimTwo() {//Проверка выключенного режима Pre
@@ -88,7 +89,13 @@ void Button::buttonRegimThree() {
 //    Heat::ajustHeat595(Fram::elementFram(1)); // Переходим к регулированию в выбранном режиме
 //    buf_485[18] = 0; // Выключаем рамку вокруг часов
 //   }
-  (Fram::elementFram(1) != 3 &&Fram::elementFram(1) != 10) && (Heat::ajustHeat595(Fram::elementFram(1)), (buf_485[18] = 0));
+//  (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) && (Heat::ajustHeat595(Fram::elementFram(1)),
+//		  (buf_485[18] = 0), (Protection::Stop()));
+  if (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) {
+      Heat::ajustHeat595(Fram::elementFram(1));//запускаем нагрев в выбранном режиме
+      buf_485[18] = 0;
+      Protection::Stop();//Выключаем проверку тока в тенах
+  }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
 bool Button::regim1Button(){
