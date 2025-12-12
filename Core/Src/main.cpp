@@ -166,24 +166,24 @@ int main(void)
  A14- SWCLK
  A15- Enc1
  ---------------Заполнение массива UART для отсылки в дисплей----------------
- min             = buf_485[1]
- dec_min    = buf_485[2]
+ min          = buf_485[1]
+ dec_min      = buf_485[2]
  one_h        = buf_485[3]
  dec_h        = buf_485[4]
  temp1        = buf_485[5]
  temp2        = buf_485[6]
  temp3        = buf_485[7]
- tempset1   = buf_485[8]
- tempset2   = buf_485[9]
- tempset3 = buf_485[10]
- set            = buf_485[11] - режим
+ tempset1     = buf_485[8]
+ tempset2     = buf_485[9]
+ tempset3     = buf_485[10]
+ set          = buf_485[11] - режим
  watch        = buf_485[12] - точки в часах
- fire            = buf_485[13]
- fire_90     = buf_485[14]
- fire_180   = buf_485[15]
- tmp_plt1  = buf_485[16]
- tmp_plt2  = buf_485[17]
- mode_2   = buf_485[18] - рамка вокруг часов
+ fire         = buf_485[13]
+ fire_90      = buf_485[14]
+ fire_180     = buf_485[15]
+ tmp_plt1     = buf_485[16]
+ tmp_plt2     = buf_485[17]
+ mode_2       = buf_485[18] - рамка вокруг часов
 
  ---------------------------------Fram память---------------------------------------
 	0 - Заданная температура
@@ -216,9 +216,14 @@ while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
 			Fram::elementFram(1, modeCookAveADC);//Возможно эта строка не нужна, так как это уже делается в методе  "control.readAdc(1);"(проверить)
-			Button::encCount();//Задаем температуру
-			(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
-
+			uint16_t asd = 0;
+			asd = Fram::elementFram(1);
+			//Button::encCount();//Задаем температуру
+			//(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
+			if(Fram::elementFram(1) != 0){//Если режим не Off ...
+				button.scanButton();//... сканируем кнопку и ...
+				button.executeButtonRegim(button.buttonRegim);//...выбираем режим кнопки
+			}
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей

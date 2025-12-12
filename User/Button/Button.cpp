@@ -39,8 +39,9 @@ void Button::buttonRegimOne() {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 bool isSettedMode = (settedMode == set || settedMode == light);
 isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonRegim  сразу =2(время выставлять не нужно)
+    encCount();
 	zeroing(); //Обнуляем все необходимые флаги
-	GPIOA->BSRR |= GPIO_PIN_12;
+	GPIOA->BSRR |= GPIO_PIN_12;//Включаем свет
 	pass3Button = false; //Обнуляем флаг прохода режима 3 кнопки(для режима "PRE")
 	HAL_TIM_Base_Stop_IT(&htim10);
 	flagOneButton = true;
@@ -165,7 +166,7 @@ vu8 Button::encCount() {
 					)), __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
 	NVIC_ClearPendingIRQ(EXTI2_IRQn),      // Очищаем бит NVIC_ICPRx
 	HAL_NVIC_EnableIRQ(EXTI2_IRQn),        // Включаем внешнее прерывание
-	encDone = false               // Обнуляем флаг прокрутки
+	encDone = false, (HAL_UART_Transmit_IT(&huart3, buf_485, 20))//Передаем на дисплей               // Обнуляем флаг прокрутки
 			);
 	return cntEncoder; //Если данные не изменились или не было поворота энкодера - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
 }
