@@ -20,7 +20,7 @@ class Button {
 private:
 	static inline vu8 encMemory;
 	static inline bool encDone = false;//Флаг прокрутки энкодера
-	 inline static vu8 buttonRegim = 0;
+	 //inline static vu8 buttonRegim = 0;
 
 //protected:
 	static const std::array<std::function<void(Button*)>, 3> arrButtonRegim;//Массив элементов типа "std::function<void()>" в контейнере "std::array<>"
@@ -35,6 +35,7 @@ public:
 	static inline  vu8 timerCntEncoder;
 	inline static bool dirTime = false;
 	inline static bool flagOneButton = false;
+	inline static vu8 buttonRegim = 0;
 	bool executeButtonRegim(vu8 index);
 	static bool executeMainRegimLogic();//Метод второго и следующих проходов
 	//--------------------------------Геттеры и сеттеры---------------------------------------------

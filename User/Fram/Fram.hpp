@@ -52,17 +52,17 @@
  * на какие пины каких портов посажены сигналы управления, смотри схему)
  ******************************************************************************
  */
-#define Fram_SIO GPIO_PIN_13//Fram_data        34 CPU
-#define Fram_SCK GPIO_PIN_12//Fram_Clock       33 CPU
+#define Fram_SIO GPIO_PIN_12//Fram_data        33 CPU
+#define Fram_SCK GPIO_PIN_13//Fram_Clock       34 CPU
 #define Fram_CS  GPIO_PIN_0//Fram_CS           26 CPU
 
 #define Fram_SIO_IN GPIOB->IDR & Fram_SIO
-#define Fram_SIO_on GPIOB->BSRR = GPIO_PIN_13//GPIO_PIN_13 SET
-#define Fram_SCK_on GPIOB->BSRR = GPIO_PIN_12//GPIO_PIN_12 SET
+#define Fram_SIO_on GPIOB->BSRR = GPIO_PIN_12//GPIO_PIN_12 SET
+#define Fram_SCK_on GPIOB->BSRR = GPIO_PIN_13//GPIO_PIN_13 SET
 #define Fram_CS_on  GPIOB->BSRR = GPIO_PIN_0//GPIO_PIN_0 SET
 
-#define Fram_SIO_off GPIOB->BSRR = GPIO_PIN_13 << 16U//GPIO_PIN_13 RESET
-#define Fram_SCK_off GPIOB->BSRR = GPIO_PIN_12 << 16U//GPIO_PIN_12 RESET
+#define Fram_SIO_off GPIOB->BSRR = GPIO_PIN_12 << 16U//GPIO_PIN_13 RESET
+#define Fram_SCK_off GPIOB->BSRR = GPIO_PIN_13 << 16U//GPIO_PIN_12 RESET
 #define Fram_CS_off  GPIOB->BSRR = GPIO_PIN_0 << 16U//GPIO_PIN_0 RESET
 //другие определения
 #define delay 30 //задержка 250нс = 5
