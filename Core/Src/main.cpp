@@ -218,12 +218,15 @@ while (1) {
 			Fram::elementFram(1, modeCookAveADC);//Возможно эта строка не нужна, так как это уже делается в методе  "control.readAdc(1);"(проверить)
 			uint16_t asd = 0;
 			asd = Fram::elementFram(1);
-			//Button::encCount();//Задаем температуру
+			Button::encCount();//Задаем температуру
+			Fram::elementFram(0);
 			//(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
 			if(Fram::elementFram(1) != 0 && Control::ovenTemper < 240){//Если режим не Off ...
 				button.scanButton();//... сканируем кнопку и ...
 				button.executeButtonRegim(button.buttonRegim);//...выбираем режим кнопки
 			}
+			Fram::elementFram(1, 100);
+			Fram::elementFram(1);
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей

@@ -156,7 +156,7 @@ vu8 Button::encCount() {
 	(encMemory != cntEncoder && encDone == true) && ( // Если данные изменились и был поворот энкодера — пишем в индикатор и FRAM
 			encMemory = cntEncoder, // Запоминаем значение, посчитанное энкодером, чтобы было с чем сравнивать
 			Fram::elementFram(0, cntEncoder), // Записываем в массив для FRAM значение счётчика энкодера
-			Fram::fram_wr_massive(), // Записываем массив во FRAM
+			//Fram::fram_wr_massive(), // Записываем массив во FRAM
 			Fram::fram_rd_massive(), // Читаем массив обратно (если нужно)
 			(settedMode != set) && ( // Выводим, если не режим "Set"
 					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[18] =151, // Записываем в массив для передачи в дисплей по RS-485

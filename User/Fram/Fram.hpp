@@ -128,14 +128,14 @@ public:
 			GPIO_InitStruct.Mode = GPIO_MODE_INPUT; //На вход
 		}
 		//ноги на фрам память,            FRAM_sio менять на ходу
-		GPIO_InitStruct.Pin = GPIO_PIN_13;
+		GPIO_InitStruct.Pin = Fram_SIO;
 		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 	}
 	static vu8 elementFram(vu8 index) { //Читаем
 		fram_rd_massive();
 		return massive_rd[index];
 	}
-	static bool elementFram(vu8 index, vu8 value){//Записываем
+	static bool elementFram(vu8 index, vu8 value){//Записываем в один адрес
 		massive_wr[index] = value;
 		fram_wr_massive();
 		return true;
