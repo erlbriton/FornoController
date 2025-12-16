@@ -39,7 +39,7 @@ void Button::buttonRegimOne() {
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 bool isSettedMode = (settedMode == set || settedMode == light);
 isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonRegim  сразу =2(время выставлять не нужно)
-    encCount();
+    //encCount();
 	zeroing(); //Обнуляем все необходимые флаги
 	GPIOA->BSRR |= GPIO_PIN_12;//Включаем свет
 	pass3Button = false; //Обнуляем флаг прохода режима 3 кнопки(для режима "PRE")
@@ -159,15 +159,16 @@ vu8 Button::encCount() {
 			//Fram::fram_wr_massive(), // Записываем массив во FRAM
 			Fram::fram_rd_massive(), // Читаем массив обратно (если нужно)
 			(settedMode != set) && ( // Выводим, если не режим "Set"
-					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[18] =151, // Записываем в массив для передачи в дисплей по RS-485
+					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[19] =151, // Записываем в массив для передачи в дисплей по RS-485
 					buf_485[8] = byte0Fram % 100 % 10, // Единицы
 					buf_485[9] = byte0Fram % 100 / 10,    // Десятки
 					(buf_485[10] = byte0Fram / 100)          // Сотни
-					)), __HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
-	NVIC_ClearPendingIRQ(EXTI2_IRQn),      // Очищаем бит NVIC_ICPRx
-	HAL_NVIC_EnableIRQ(EXTI2_IRQn),        // Включаем внешнее прерывание
+					)),
 	encDone = false, (HAL_UART_Transmit_IT(&huart3, buf_485, 20))//Передаем на дисплей               // Обнуляем флаг прокрутки
 			);
+	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
+	NVIC_ClearPendingIRQ(EXTI2_IRQn);    // Очищаем бит NVIC_ICPRx
+	HAL_NVIC_EnableIRQ(EXTI2_IRQn);    // Включаем внешнее прерывание
 	return cntEncoder; //Если данные не изменились или не было поворота энкодера - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
 }
 

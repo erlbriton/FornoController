@@ -16,11 +16,13 @@
 
 //------------------------------Главный метод--------------------------------------------------
 void Heat::ajustHeat595(vu8 numberRegimCook) {
+	Button::encCount();
 	if (!checkProtectionTriggers()) {//Если защиты не сработали
-		vu8 differenceTemper = Fram::framRD0byte() - Control::ovenTemper;
+		vu8 differenceTemper = Fram::framRD0byte() - Control::ovenTemper;//Разность между установленной и текущей температурой
+//Определяем номер члена столбца(второй мерности) массива modeTable. То есть включать 1 ТЭН или 2.
 		bool hiLowMode = static_cast<bool>(differenceTemper > HysteresisTemp());
-		vu8 dataTransmit = modeTable[numberRegimCook][hiLowMode];
-		TransmitToTENs(dataTransmit);
+		vu8 dataTransmit = modeTable[numberRegimCook][hiLowMode];//
+		TransmitToTENs(dataTransmit);//Посылаем на ТЭНЫ
 	}
 	checkAndPlaySound(Fram::framRD0byte());
 	SetTimer::TimeCook(Button::dirTime);

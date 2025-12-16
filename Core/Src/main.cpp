@@ -131,6 +131,8 @@ int main(void)
 	HAL_ADC_Start(&hadc2);
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
 	Sensor_init();
+	HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 	GPIOC->BSRR = GPIO_PIN_4;	//DIR на передачу
 	GPIOA->BSRR = GPIO_PIN_12 << 16U;	//Свет выкл
 	GPIOB->BSRR= GPIO_PIN_7 << 16U;	//HC595 вкл
@@ -221,7 +223,7 @@ while (1) {
 			Button::encCount();//Задаем температуру
 			Fram::elementFram(0);
 			//(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
-			if(Fram::elementFram(1) != 0 && Control::ovenTemper < 240){//Если режим не Off ...
+			if(Fram::elementFram(1) != 0){//Если режим не Off ...
 				button.scanButton();//... сканируем кнопку и ...
 				button.executeButtonRegim(button.buttonRegim);//...выбираем режим кнопки
 			}

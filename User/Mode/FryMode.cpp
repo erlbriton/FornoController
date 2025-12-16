@@ -10,7 +10,7 @@
 
 void FryModeLambda::modeCom(vu16 averageAdc, vu8 tempFirstMode) {//Метод, запускаемый при переключении режима
 	firstRegim(tempFirstMode);//Устанавливаем первоначальный режим
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);//Запускаем енкодер в работу
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);//Запускаем энкодер в работу
 	buf_485[11] =  Fram::elementFram(1);//Номер режима
 }
 //-----------------------------------Начальный режим---------------------------------------
@@ -63,6 +63,7 @@ const std::array<std::function<void(FryModeLambda*)>, 6> FryModeLambda::modeCook
 		//---------------------------------------------2 - Dry----------------------------------------------------------------------------------
 		[ ](FryModeLambda* fryModeLambda) {
 			fryModeLambda->modeCom(settedMode, fryModeLambda->firstTempDry);//Dry
+			HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
 		},
 		//----------------------------------------------3 - Set----------------------------------------------------------------------------------
 		[ ](FryModeLambda* fryModeLambda) {//Set
@@ -76,6 +77,7 @@ const std::array<std::function<void(FryModeLambda*)>, 6> FryModeLambda::modeCook
 		//-------------------------4 - Grill---Brow---Fan---Ff---Ord---Cook-----------------------------------------------
 		[ ](FryModeLambda *fryModeLambda) {
 			fryModeLambda->modeCom(settedMode, fryModeLambda->firstTemp);
+			HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
 			buf_485[11] = settedMode;
 		},
         //--------------------------------------------------5 - Light------------------------------------------------------------------
