@@ -21,7 +21,7 @@
 
 class Heat {
 private:
-	static bool checkProtectionTriggers();
+	static bool checkProtectionTriggers(vu8);
 	static void checkAndPlaySound(vu8 setTemp);//Установленная температура
 	//Массив кодов, подающихся непосредственно на тэны и внутренний кулер
 	static constexpr vu8 modeTable[11 ][2] = {
@@ -37,6 +37,7 @@ private:
 		    {10,   10},//Cook
 		    {0,     0}//Light
 };
+	inline static vu8 dataTransmit;
 public:
 	static inline bool soundPre;//Флаг подачи звука предварительного нагрева
 	static inline vu8 dataMode;	//Ключ для массива пар, который определяет данные для передачи на 595(работае также просто как локальная переменная)

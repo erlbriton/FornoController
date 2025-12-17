@@ -15,15 +15,29 @@
 #define safeTemperature 90
 
 //------------------------------Главный метод--------------------------------------------------
+//void Heat::ajustHeat595(vu8 numberRegimCook) {
+//	Button::encCount();//Установка температуры в режиме приготовления
+//	if (!checkProtectionTriggers()) {//Если защиты не сработали
+//		vu8 differenceTemper = Fram::framRD0byte() - Control::ovenTemper;//Разность между установленной и текущей температурой
+////Определяем номер члена столбца(второй мерности) массива modeTable. То есть включать 1 ТЭН или 2.
+//		bool hiLowMode = static_cast<bool>(differenceTemper > HysteresisTemp());
+//		vu8 dataTransmit = modeTable[numberRegimCook][hiLowMode];//
+//		TransmitToTENs(dataTransmit);//Посылаем на ТЭНЫ
+//	}
+//	checkAndPlaySound(Fram::framRD0byte());
+//	SetTimer::TimeCook(Button::dirTime);
+//}
+
 void Heat::ajustHeat595(vu8 numberRegimCook) {
 	Button::encCount();//Установка температуры в режиме приготовления
-	if (!checkProtectionTriggers()) {//Если защиты не сработали
+	//checkProtectionTriggers()) {//Если защиты не сработали
 		vu8 differenceTemper = Fram::framRD0byte() - Control::ovenTemper;//Разность между установленной и текущей температурой
 //Определяем номер члена столбца(второй мерности) массива modeTable. То есть включать 1 ТЭН или 2.
 		bool hiLowMode = static_cast<bool>(differenceTemper > HysteresisTemp());
-		vu8 dataTransmit = modeTable[numberRegimCook][hiLowMode];//
+		dataTransmit = modeTable[numberRegimCook][hiLowMode];//
+		if (!Heat::checkProtectionTriggers(dataTransmit)) {//Если защиты не сработали
 		TransmitToTENs(dataTransmit);//Посылаем на ТЭНЫ
-	}
+		}
 	checkAndPlaySound(Fram::framRD0byte());
 	SetTimer::TimeCook(Button::dirTime);
 }
@@ -74,16 +88,16 @@ struct ProtectionTrigger {
 	std::function<bool()> condition;//Условие, которое проверяется (возвращает true или false)
 	std::function<bool()> action;//Что делать, если условие выполнено
 };
-bool aaa = 0;
-bool Heat::checkProtectionTriggers() {
+
+bool Heat::checkProtectionTriggers(vu8 dataTransmit) {
 	const ProtectionTrigger triggers[ ] = {
 		{
 			[]() { return doorRd != 0 && Control::ovenTemper > safeTemperature;},//Открыта дверь и температуры выше безопасной
-			[]() { dataMode = 0; TransmitToTENs(dataMode); return true; }
+			[&]() { dataTransmit = 0; TransmitToTENs(dataTransmit); return true; }
 		},
 		{
 			[]() { return Control::ovenTemper > Fram::framRD0byte(); },//Перегрев
-			[]() { dataMode &= 0b1000; TransmitToTENs(dataMode); return true; }//Кулер не изменяем
+			[&]() { dataTransmit &= 0b1000; TransmitToTENs(dataTransmit); return true; }//Кулер не изменяем
 		},
 		{
 			[]() { return rightIn && downIn && grillIn; },//Проверка всех включенных тэнов
