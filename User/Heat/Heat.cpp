@@ -59,8 +59,8 @@ void Heat::TransmitToTENs(vu8 dataTransmit) {
 	buf_485[14] = rightIn; //Пламя сбоку
 	uint8_t rIn = rightIn << 2;          //Читаем...
 	uint8_t gIn = grillIn << 1;          //...включенные...
-	uint8_t dIn = downIn << 0;           //...выходы...
-	uint8_t fIn = dataTransmit >> 3 << 3;   //...HC595
+	uint8_t dIn = downIn  << 0;           //...выходы HC595
+	uint8_t fIn = dataTransmit &= 0b1000;//Обнуляем посылку в HC595
 	dataModeOld = rIn + gIn + dIn + fIn;//Старая посылка
 }
 //------------------------Гистерезис температур в зависимости от режима---------------------------------------------------
@@ -92,25 +92,32 @@ struct ProtectionTrigger {
 bool Heat::checkProtectionTriggers(vu8 dataTransmit) {
 	const ProtectionTrigger triggers[ ] = {
 		{
-			[]() { return doorRd != 0 && Control::ovenTemper > safeTemperature;},//Открыта дверь и температуры выше безопасной
-			[&]() { dataTransmit = 0; TransmitToTENs(dataTransmit); return true; }
+			[]()  { return doorRd != 0 && Control::ovenTemper > safeTemperature;},//Открыта дверь и температуры выше безопасной
+			[&]() { dataTransmit = 0;
+			TransmitToTENs(dataTransmit);
+			return true; }
 		},
 		{
-			[]() { return Control::ovenTemper > Fram::framRD0byte(); },//Перегрев
-			[&]() { dataTransmit &= 0b1000; TransmitToTENs(dataTransmit); return true; }//Кулер не изменяем
+			[]()  { return Control::ovenTemper > Fram::framRD0byte(); },//Перегрев
+			[&]() { dataTransmit &= 0b1000;//Кулер не изменяем
+			TransmitToTENs(dataTransmit);//Передаем на тэны
+			return true; }
 		},
+
 		{
 			[]() { return rightIn && downIn && grillIn; },//Проверка всех включенных тэнов
-			[]() { Button::regim1Button(); return true; }
+			[]() { Button::regim1Button();//Включаем 1-й  режим кнопки
+			GPIOA->BSRR |= GPIO_PIN_8 << 16U;//Подаем сигнал о всех трех включенных тэнах на SN74LVC1G97
+			return true; }
 		},
 		{
 				[]() {//Проверка прошедшего времени при t < 120 град
-				return (Fram::framRD0byte() > 70 && Fram::framRD0byte() <= 120) && (SetTimer::totalTime > maxTotalTime);//12 часов
+				return (Fram::framRD0byte() > 70 && Fram::framRD0byte() <= 120) && SetTimer::totalTime > maxTotalTime;//12 часов
 			},
 			[]() { Button::regim1Button(); return true; }
 		},
 		{
-			[]() {//Проверка прошедшего времени при t > 120 град
+				[]() {//Проверка прошедшего времени при t > 120 град
 				return Fram::framRD0byte() > 120 && SetTimer::totalTime > minTotalTime;//3 часа
 			},
 			[]() { Button::regim1Button(); return true; }
