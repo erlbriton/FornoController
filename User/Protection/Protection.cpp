@@ -50,7 +50,8 @@ void Protection::Stop() {
     TIM5->CR1 &= ~TIM_CR1_CEN;
 
     // 2. Запретить прерывание EXTI15 (ЗАПРЕТ МАСКИ)
-    EXTI->IMR &= ~SIGNAL_EXTI_LINE;
+    //EXTI->IMR &= ~SIGNAL_EXTI_LINE;
+    HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 
     // 3. Сбросить состояние
     current_state = SIGNAL_ABSENT;

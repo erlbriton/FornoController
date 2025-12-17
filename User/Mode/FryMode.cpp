@@ -62,7 +62,7 @@ const std::array<std::function<void(FryModeLambda*)>, 6> FryModeLambda::modeCook
 		},
 		//---------------------------------------------2 - Dry----------------------------------------------------------------------------------
 		[ ](FryModeLambda* fryModeLambda) {
-			fryModeLambda->modeCom(settedMode, fryModeLambda->firstTempDry);//Dry
+			fryModeLambda->modeCom(settedMode, fryModeLambda->firstTempDry);
 			HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
 		},
 		//----------------------------------------------3 - Set----------------------------------------------------------------------------------
