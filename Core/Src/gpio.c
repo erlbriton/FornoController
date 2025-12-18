@@ -66,12 +66,12 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, MR_Pin|Fan_out_Pin|Light_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : Off_Pin OE_Pin OtherC12_Pin */
-  GPIO_InitStruct.Pin = Off_Pin|OE_Pin|OtherC12_Pin;
+  /*Configure GPIO pin : Off_Pin */
+  GPIO_InitStruct.Pin = Off_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(Off_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Idig_Pin */
   GPIO_InitStruct.Pin = Idig_Pin;
@@ -125,6 +125,13 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(Latch_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : OE_Pin OtherC12_Pin */
+  GPIO_InitStruct.Pin = OE_Pin|OtherC12_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Right_in_Pin grill_In_Pin */
   GPIO_InitStruct.Pin = Right_in_Pin|grill_In_Pin;

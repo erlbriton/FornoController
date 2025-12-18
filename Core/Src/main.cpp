@@ -36,6 +36,7 @@
 #include "Heat.hpp"
 #include "Button.hpp"
 #include "melody_gpio.hpp"
+#include "Protection.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -213,6 +214,7 @@ MelodyPlayer::playPodmoskovnye();
 
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 //EXTI->IMR |= EXTI_IMR_MR15;//Разрешаем прерывание EXTI15
+Protection::Init();
 
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима

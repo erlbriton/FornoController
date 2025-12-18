@@ -15,22 +15,8 @@
 #define safeTemperature 90
 
 //------------------------------Главный метод--------------------------------------------------
-//void Heat::ajustHeat595(vu8 numberRegimCook) {
-//	Button::encCount();//Установка температуры в режиме приготовления
-//	if (!checkProtectionTriggers()) {//Если защиты не сработали
-//		vu8 differenceTemper = Fram::framRD0byte() - Control::ovenTemper;//Разность между установленной и текущей температурой
-////Определяем номер члена столбца(второй мерности) массива modeTable. То есть включать 1 ТЭН или 2.
-//		bool hiLowMode = static_cast<bool>(differenceTemper > HysteresisTemp());
-//		vu8 dataTransmit = modeTable[numberRegimCook][hiLowMode];//
-//		TransmitToTENs(dataTransmit);//Посылаем на ТЭНЫ
-//	}
-//	checkAndPlaySound(Fram::framRD0byte());
-//	SetTimer::TimeCook(Button::dirTime);
-//}
-
 void Heat::ajustHeat595(vu8 numberRegimCook) {
 	Button::encCount();//Установка температуры в режиме приготовления
-	//checkProtectionTriggers()) {//Если защиты не сработали
 		vu8 differenceTemper = Fram::framRD0byte() - Control::ovenTemper;//Разность между установленной и текущей температурой
 //Определяем номер члена столбца(второй мерности) массива modeTable. То есть включать 1 ТЭН или 2.
 		bool hiLowMode = static_cast<bool>(differenceTemper > HysteresisTemp());
@@ -134,6 +120,6 @@ bool Heat::checkProtectionTriggers(vu8 dataTransmit) {
 void Heat::checkAndPlaySound(vu8 setTemp) {
     (Fram::elementFram(1) == 1 && Heat::soundPre == 0 && ((setTemp - Control::ovenTemper) <= HysteresisTemp())) &&
     		(MelodyPlayer::playPodmoskovnye(),//Играет "Подмосковные вечера"
-            Heat::soundPre = true);//Флаг "Звук предварительного нанрева подан"
+            Heat::soundPre = true);//Флаг "Звук предварительного нагрева подан"
 }
 

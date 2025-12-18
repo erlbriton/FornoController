@@ -36,9 +36,10 @@ void Protection::Start() {
     timeout_tick_counter = 0;
 
     // 2. Разрешить прерывание EXTI15 (РАЗРЕШЕНИЕ МАСКИ)
-    EXTI->IMR |= SIGNAL_EXTI_LINE;
+    //EXTI->IMR |= SIGNAL_EXTI_LINE;
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
-    // 3. Запустить TIM5
+    // 3. Запустить TIM
     TIM5->CR1 |= TIM_CR1_CEN;
 }
 

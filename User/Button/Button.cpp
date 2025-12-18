@@ -46,6 +46,9 @@ isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonReg
 	HAL_TIM_Base_Stop_IT(&htim10);
 	flagOneButton = true;
 	Protection::Start();//Запускаем проверку тока в тенах
+	if (Protection::GetState() == SIGNAL_PRESENT) {// КРИТИЧЕСКАЯ ОШИБКА: Реле залипло!
+		GPIOC->BSRR = GPIO_PIN_13; // // Выключить общий контактор, включить зуммер, показать ошибку
+	    }
 }
 //-----------------------Второй режим кнопки----------------------------
 void Button::buttonRegimTwo() {//Проверка выключенного режима Pre
