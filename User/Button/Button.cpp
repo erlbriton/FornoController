@@ -11,6 +11,7 @@
 #include <cstdio>
 #include "SetTimer.hpp"
 #include "flashdata.hpp"
+#include "Protection.hpp"
 //--------------------------------------------Сканируем нажатие-------------------------------------
 uint8_t Button::scanButton() {
 	vu8 modeCookAveADC = Fram::elementFram(1);
@@ -45,9 +46,12 @@ isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonReg
 	pass3Button = false; //Обнуляем флаг прохода режима 3 кнопки(для режима "PRE")
 	HAL_TIM_Base_Stop_IT(&htim10);
 	flagOneButton = true;
-	Protection::Start();//Запускаем проверку тока в тенах
+	if(!Protection::protection_is_active){
+	            	Protection::Start();//Запускаем проверку тока в тенах
+	            	}
 	if (Protection::GetState() == SIGNAL_PRESENT) {// КРИТИЧЕСКАЯ ОШИБКА: Реле залипло!
 		GPIOC->BSRR = GPIO_PIN_13; // // Выключить общий контактор, включить зуммер, показать ошибку
+		GPIOB->BSRR = GPIO_PIN_9 << 16U;
 	    }
 }
 //-----------------------Второй режим кнопки----------------------------
@@ -99,6 +103,7 @@ void Button::buttonRegimThree() {
       Heat::ajustHeat595(Fram::elementFram(1));//запускаем нагрев в выбранном режиме
       buf_485[18] = 0;
       Protection::Stop();//Выключаем проверку тока в тенах
+      //Protection::protection_is_active = false;
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------

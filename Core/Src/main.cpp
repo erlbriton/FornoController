@@ -133,7 +133,7 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
 	Sensor_init();
 	HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+	//HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 	GPIOC->BSRR = GPIO_PIN_4;	//DIR на передачу
 	GPIOA->BSRR = GPIO_PIN_12 << 16U;	//Свет выкл
 	GPIOB->BSRR= GPIO_PIN_7 << 16U;	//HC595 вкл
@@ -215,6 +215,8 @@ MelodyPlayer::playPodmoskovnye();
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 //EXTI->IMR |= EXTI_IMR_MR15;//Разрешаем прерывание EXTI15
 Protection::Init();
+GPIOB->BSRR = GPIO_PIN_9;
+bool protection_is_active = false;
 
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима

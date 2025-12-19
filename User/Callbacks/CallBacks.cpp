@@ -110,7 +110,8 @@ void TimerManager::handleTIM11() {
 //---------------------EXTIManager-----------------------------
 void EXTIManager::handleEXTIInterrupt(uint16_t GPIO_Pin) {
 	(GPIO_Pin == GPIO_PIN_2 && (handleGPIO2(), true)) ||
-	(GPIO_Pin == GPIO_PIN_14 && (handleGPIO14(), true));
+	(GPIO_Pin == GPIO_PIN_14 && (handleGPIO14(), true))||
+	(GPIO_Pin == GPIO_PIN_15 && (handleGPIO15(), true));
 }
 void EXTIManager::handleGPIO2() {
     HAL_NVIC_DisableIRQ(EXTI2_IRQn);

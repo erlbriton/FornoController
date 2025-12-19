@@ -6,6 +6,7 @@
  */
 
 #include "Protection.hpp"
+#include "tim.h"
 
 Protection::Protection() {}
 
@@ -13,6 +14,7 @@ Protection::Protection() {}
 volatile SignalState_t Protection::current_state = SIGNAL_ABSENT;
 volatile uint16_t Protection::Pulse_Confirm_Counter = 0;
 volatile uint16_t Protection::timeout_tick_counter = 0;
+volatile bool protection_is_active = false;
 
 // --- Константа для регистрового доступа ---
 //const uint32_t Protection::SIGNAL_EXTI_LINE = EXTI_LINE_15;
@@ -30,17 +32,20 @@ void Protection::Init() {
  * @brief Активирует мониторинг. Вызывать, когда ТЭНы программно отключены.
  */
 void Protection::Start() {
+	EXTI->PR = EXTI_PR_PR15; // Сброс флага перед началом работы
     // 1. Сброс состояния и счетчиков
     current_state = SIGNAL_ABSENT;
     Pulse_Confirm_Counter = 0;
     timeout_tick_counter = 0;
 
     // 2. Разрешить прерывание EXTI15 (РАЗРЕШЕНИЕ МАСКИ)
-    //EXTI->IMR |= SIGNAL_EXTI_LINE;
+    EXTI->IMR |= EXTI_IMR_IM15;
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
     // 3. Запустить TIM
-    TIM5->CR1 |= TIM_CR1_CEN;
+    //TIM5->CR1 |= TIM_CR1_CEN;
+    HAL_TIM_Base_Start_IT(&htim5);
+    Protection::protection_is_active = true;
 }
 
 /**
@@ -48,16 +53,19 @@ void Protection::Start() {
  */
 void Protection::Stop() {
     // 1. Остановить TIM5
-    TIM5->CR1 &= ~TIM_CR1_CEN;
+    //TIM5->CR1 &= ~TIM_CR1_CEN;
+    HAL_TIM_Base_Stop_IT(&htim5);
+    GPIOB->BSRR = GPIO_PIN_9;
 
     // 2. Запретить прерывание EXTI15 (ЗАПРЕТ МАСКИ)
-    //EXTI->IMR &= ~SIGNAL_EXTI_LINE;
+    EXTI->IMR &= ~SIGNAL_EXTI_LINE;
     HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 
     // 3. Сбросить состояние
     current_state = SIGNAL_ABSENT;
     Pulse_Confirm_Counter = 0;
     timeout_tick_counter = 0;
+    Protection::protection_is_active = false;
 }
 
 /**
@@ -66,7 +74,7 @@ void Protection::Stop() {
  */
 void Protection::EXTI_Handler() {
     // Проверяем, что флаг EXTI15 установлен
-    if (EXTI->PR & SIGNAL_EXTI_LINE) {
+    //if (EXTI->PR & SIGNAL_EXTI_LINE) {
 
         // --- Сброс Таймаута ---
         // Ток есть, сбрасываем счетчик тишины.
@@ -77,7 +85,7 @@ void Protection::EXTI_Handler() {
 
             // 1. Считаем импульсы до REQUIRED_PULSE_COUNT (20)
             if (Pulse_Confirm_Counter < REQUIRED_PULSE_COUNT) {
-                 Pulse_Confirm_Counter++;
+            	Pulse_Confirm_Counter++;
             }
 
             // 2. Если 20 импульсов получено, подтверждаем наличие тока.
@@ -90,7 +98,7 @@ void Protection::EXTI_Handler() {
 
         // Очистка флага прерывания EXTI
         EXTI->PR = SIGNAL_EXTI_LINE;
-    }
+        EXTI->PR = EXTI_PR_PR15;
 }
 
 /**
