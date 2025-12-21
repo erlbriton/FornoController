@@ -75,7 +75,7 @@ struct ProtectionTrigger {
 	std::function<bool()> action;//Что делать, если условие выполнено
 };
 
-bool Heat::checkProtectionTriggers(vu8 dataTransmit) {
+bool Heat::checkProtectionTriggers(vu8 dataTransmit){
 	const ProtectionTrigger triggers[ ] = {
 		{
 			[]()  { return doorRd != 0 && Control::ovenTemper > safeTemperature;},//Открыта дверь и температуры выше безопасной
@@ -97,16 +97,15 @@ bool Heat::checkProtectionTriggers(vu8 dataTransmit) {
 			return true; }
 		},
 		{
-				[]() {//Проверка прошедшего времени при t < 120 град
-				return (Fram::framRD0byte() > 70 && Fram::framRD0byte() <= 120) && SetTimer::totalTime > maxTotalTime;//12 часов
-			},
+				//Проверка прошедшего времени при t < 120 град
+		    []() {return (Fram::framRD0byte() > 70 && Fram::framRD0byte() <= 120) && SetTimer::totalTime > maxTotalTime;},//12 часов
 			[]() { Button::regim1Button(); return true; }
 		},
 		{
-				[]() {//Проверка прошедшего времени при t > 120 град
-				return Fram::framRD0byte() > 120 && SetTimer::totalTime > minTotalTime;//3 часа
-			},
-			[]() { Button::regim1Button(); return true; }
+			[]() {//Проверка прошедшего времени при t > 120 град
+			return Fram::framRD0byte() > 120 && SetTimer::totalTime > minTotalTime;},//3 часа
+
+			[]() {Button::regim1Button(); return true;}
 		}
 	};
 	for (const auto& trigger : triggers) {//Проходимся по массиву циклом:

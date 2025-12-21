@@ -105,6 +105,7 @@ void Button::buttonRegimThree() {
       Heat::ajustHeat595(Fram::elementFram(1));//запускаем нагрев в выбранном режиме
       buf_485[18] = 0;
       Protection::Stop();//Выключаем проверку тока в тенах
+      GPIOB->BSRR = GPIO_PIN_9;
       //Protection::protection_is_active = false;
   }
 }

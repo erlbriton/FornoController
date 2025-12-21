@@ -42,7 +42,7 @@ public:
 	static inline bool soundPre;//Флаг подачи звука предварительного нагрева
 	static inline vu8 dataMode;	//Ключ для массива пар, который определяет данные для передачи на 595(работае также просто как локальная переменная)
 	static inline uint8_t dataModeOld = 0;//Режим(см. выше) прошлой итерации. Нужен для сравнения с текущим режимом и принятия
-	static const uint16_t maxTotalTime = 43200;	//Общее время работы до 120 градусов
+	static const uint32_t maxTotalTime = 43200;	//Общее время работы до 120 градусов
 	static const uint16_t minTotalTime = 10800;	//Общее время работы более  120 градусов
 	static  void ajustHeat595(vu8 numberRegimCook);
 	static void TransmitToTENs(vu8);

@@ -221,7 +221,7 @@ bool protection_is_active = false;
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
-			Fram::elementFram(1, modeCookAveADC);//Возможно эта строка не нужна, так как это уже делается в методе  "control.readAdc(1);"(проверить)
+			//Fram::elementFram(1, modeCookAveADC);//Возможно эта строка не нужна, так как это уже делается в методе  "control.readAdc(1);"(проверить)
 			uint16_t asd = 0;
 			asd = Fram::elementFram(1);
 			Button::encCount();//Задаем температуру
