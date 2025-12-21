@@ -49,8 +49,10 @@ isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonReg
 	if(!Protection::protection_is_active){
 	            	Protection::Start();//Запускаем проверку тока в тенах
 	            	}
-	if (Protection::GetState() == SIGNAL_PRESENT) {// КРИТИЧЕСКАЯ ОШИБКА: Реле залипло!
-		GPIOC->BSRR = GPIO_PIN_13; // // Выключить общий контактор, включить зуммер, показать ошибку
+	if (Protection::GetState() == SIGNAL_PRESENT) {//Реле залипло!
+		GPIOC->BSRR = GPIO_PIN_13;//Включить реле выключения автомата
+		HAL_Delay(2000);
+		GPIOC->BSRR = GPIO_PIN_13<< 16U;//Выключить реле выключения автомата
 		GPIOB->BSRR = GPIO_PIN_9 << 16U;
 	    }
 }
