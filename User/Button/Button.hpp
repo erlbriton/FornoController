@@ -19,7 +19,7 @@
 class Button {
 private:
 	static inline vu8 encMemory;
-	static inline bool encDone = false;//Флаг прокрутки энкодера
+	static inline volatile bool encDone = false;//Флаг прокрутки энкодера
 	 //inline static vu8 buttonRegim = 0;
 
 //protected:
@@ -31,7 +31,7 @@ private:
 	static inline bool firstCall = true;
 
 public:
-	static inline  vu8 cntEncoder;
+	static inline  volatile vu8 cntEncoder;
 	static inline  vu8 timerCntEncoder;
 	inline static bool dirTime = false;
 	inline static bool flagOneButton = false;

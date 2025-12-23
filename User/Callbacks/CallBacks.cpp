@@ -114,6 +114,7 @@ void EXTIManager::handleEXTIInterrupt(uint16_t GPIO_Pin) {
 	(GPIO_Pin == GPIO_PIN_15 && (handleGPIO15(), true));
 }
 void EXTIManager::handleGPIO2() {
+	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2);
     HAL_NVIC_DisableIRQ(EXTI2_IRQn);
     Button::isEncDone(true);
 }

@@ -160,29 +160,65 @@ void Button::zeroing() {
 	buf_485[15] = 0; //Стираем огонь
 }
 //----------------------------------------------------------------Задаем температуру-----------------------------------------------------------------------
+//vu8 Button::encCount() {
+//	vu8 settedMode = Fram::elementFram(1); // Читаем устaновленный режим из Fram
+//	vu8 byte0Fram = 0;
+//	(buttonRegim != 1)
+//			&& (cntEncoder = TIM2->CNT, // Количество импульсов, посчитанных энкодером
+//	(encMemory != cntEncoder && encDone == true) && ( // Если данные изменились и был поворот энкодера — пишем в индикатор и FRAM
+//			encMemory = cntEncoder, // Запоминаем значение, посчитанное энкодером, чтобы было с чем сравнивать
+//			Fram::elementFram(0, cntEncoder), // Записываем в массив для FRAM значение счётчика энкодера
+//			//Fram::fram_wr_massive(), // Записываем массив во FRAM
+//			Fram::fram_rd_massive(), // Читаем массив обратно (если нужно)
+//			(settedMode != set) && ( // Выводим, если не режим "Set"
+//					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[19] =151, // Записываем в массив для передачи в дисплей по RS-485
+//					buf_485[8] = byte0Fram % 100 % 10, // Единицы
+//					buf_485[9] = byte0Fram % 100 / 10,    // Десятки
+//					(buf_485[10] = byte0Fram / 100)          // Сотни
+//					)),
+//	encDone = false, (HAL_UART_Transmit_IT(&huart3, buf_485, 20))//Передаем на дисплей               // Обнуляем флаг прокрутки
+//			);
+//	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
+//	NVIC_ClearPendingIRQ(EXTI2_IRQn);    // Очищаем бит NVIC_ICPRx
+//	HAL_NVIC_EnableIRQ(EXTI2_IRQn);    // Включаем внешнее прерывание
+//	return cntEncoder; //Если данные не изменились или не было поворота энкодера - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
+//}
 vu8 Button::encCount() {
-	vu8 settedMode = Fram::elementFram(1); // Читаем устaновленный режим из Fram
-	vu8 byte0Fram = 0;
-	(buttonRegim != 1) && (cntEncoder = TIM2->CNT, // Количество импульсов, посчитанных энкодером
-	(encMemory != cntEncoder && encDone == true) && ( // Если данные изменились и был поворот энкодера — пишем в индикатор и FRAM
-			encMemory = cntEncoder, // Запоминаем значение, посчитанное энкодером, чтобы было с чем сравнивать
-			Fram::elementFram(0, cntEncoder), // Записываем в массив для FRAM значение счётчика энкодера
-			//Fram::fram_wr_massive(), // Записываем массив во FRAM
-			Fram::fram_rd_massive(), // Читаем массив обратно (если нужно)
-			(settedMode != set) && ( // Выводим, если не режим "Set"
-					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[19] =151, // Записываем в массив для передачи в дисплей по RS-485
-					buf_485[8] = byte0Fram % 100 % 10, // Единицы
-					buf_485[9] = byte0Fram % 100 / 10,    // Десятки
-					(buf_485[10] = byte0Fram / 100)          // Сотни
-					)),
-	encDone = false, (HAL_UART_Transmit_IT(&huart3, buf_485, 20))//Передаем на дисплей               // Обнуляем флаг прокрутки
-			);
-	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
-	NVIC_ClearPendingIRQ(EXTI2_IRQn);    // Очищаем бит NVIC_ICPRx
-	HAL_NVIC_EnableIRQ(EXTI2_IRQn);    // Включаем внешнее прерывание
-	return cntEncoder; //Если данные не изменились или не было поворота энкодера - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
-}
+    vu8 settedMode = Fram::elementFram(1); // Читаем установленный режим из Fram
+    vu8 byte0Fram = 0;
+    // Главное условие: работаем, если режим не равен 1
+    if (buttonRegim != 1) {
+        cntEncoder = TIM2->CNT; // Считываем текущее значение счетчика таймера
+        // Проверяем, изменились ли данные и был ли поворот (флаг encDone)
+        if (encMemory != cntEncoder && encDone == true) {
+            encMemory = cntEncoder;        // Запоминаем новое значение
+            Fram::elementFram(0, cntEncoder); // Сохраняем во внутренний массив
+            Fram::fram_rd_massive();       // Читаем массив обратно
+            // Если мы не в режиме настройки "Set", обновляем данные для дисплея
+            if (settedMode != set) {
+                byte0Fram = Fram::framRD0byte();
+                buf_485[0] = 151;
+                buf_485[19] = 151;
+                // Разложение числа на разряды для индикации
+                buf_485[8] = byte0Fram % 10;          // Единицы
+                buf_485[9] = (byte0Fram / 10) % 10;   // Десятки
+                buf_485[10] = byte0Fram / 100;        // Сотни
+            }
 
+            // Отправляем обновленные данные на дисплей
+            HAL_UART_Transmit_IT(&huart3, buf_485, 20);
+
+            // Сбрасываем флаг прокрутки только после обработки изменения
+            encDone = false;
+        }
+    }
+    // Блок очистки прерываний (выполняется всегда)
+    //__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2);
+    //NVIC_ClearPendingIRQ(EXTI2_IRQn);
+    HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+
+    return cntEncoder;
+}
 //------------------------------------Геттеры и сеттеры----------------------------------------------
 //vu8 Button::getCntEncoder() const{//Геттер CntEncoder
 //	return cntEncoder;
