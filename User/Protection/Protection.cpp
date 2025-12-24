@@ -58,7 +58,6 @@ void Protection::Stop() {
     GPIOB->BSRR = GPIO_PIN_9;
 
     // 2. Запретить прерывание EXTI15 (ЗАПРЕТ МАСКИ)
-    //EXTI->IMR &= ~SIGNAL_EXTI_LINE;
     EXTI->IMR &= ~(1U << 15);
     //HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 

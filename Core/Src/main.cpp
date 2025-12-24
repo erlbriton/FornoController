@@ -222,17 +222,13 @@ while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
 			Fram::elementFram(1, modeCookAveADC);
-			uint16_t asd = 0;
-			asd = Fram::elementFram(1);
 			Button::encCount();//Задаем температуру
 			Fram::elementFram(0);
-			//(Fram::elementFram(1) != 0) && button.executeButtonRegim(button.scanButton());//Если режим не Off - запускаем режимы кнопки
+			uint8_t gfd = Fram::elementFram(1);
 			if(Fram::elementFram(1) != 0){//Если режим не Off ...
 				button.scanButton();//... сканируем кнопку и ...
 				button.executeButtonRegim(button.buttonRegim);//...выбираем режим кнопки
 			}
-			Fram::elementFram(1, 100);
-			Fram::elementFram(1);
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей

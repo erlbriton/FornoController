@@ -102,6 +102,7 @@ void Button::buttonRegimThree() {
 //  (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) && (Heat::ajustHeat595(Fram::elementFram(1)),
 //		  (buf_485[18] = 0), (Protection::Stop()));
   if (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) {
+	  uint8_t dfds = Fram::elementFram(1);
       Heat::ajustHeat595(Fram::elementFram(1));//запускаем нагрев в выбранном режиме
       buf_485[18] = 0;
       Protection::Stop();//Выключаем проверку тока в тенах
