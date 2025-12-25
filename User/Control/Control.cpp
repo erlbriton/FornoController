@@ -69,15 +69,16 @@ bool Control::backInfo() {
 	buf_485[9] = temperFornoBack % 100 / 10; //...десятки ........
 	buf_485[10] = temperFornoBack / 100; //...сотни заданной температуры
 	buf_485[11] = modeBack; //Режим приготовления
-	SetTimer::minCounterDec = (Fram::elementFram(6) << 8) | Fram::elementFram(7);
-	SetTimer::minCounterInc = SetTimer::minCounterDec;// = framRdWr.massive_rd[6];
+	SetTimer::minCounterDec = (Fram::elementFram(6) << 8) | Fram::elementFram(7);//Соединяем старший и младший байты счетчика минут
+	SetTimer::minCounterInc = SetTimer::minCounterDec;//Счетчик инкремента и декремента времени здесь равны
 	Button::setButtonRegim(2);//Восстанавливаем 3-й режим кнопки
 	SetTimer::number_Iterator_Decrement = true;//Восстанавливаем второй проход инкремента времени
 	SetTimer::number_Iterator_Increment = true;//Восстанавливаем второй проход декремента времени
 	FryModeLambda::modeCookOld = modeBack; //Восстанавливаем информацию, что проход по установке режима уже сделан(ПРОВЕРИТЬ)
-	HAL_UART_Transmit_IT(&huart3, buf_485, 20);
 	Fram::elementFram(5, 0);//Снимаем флаг "Сброс во время работы"
-	Heat::ajustHeat595(modeBack);                 //(иначе сработает ф-ия firstRegim и все выключится)/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	GPIOA->BSRR = GPIO_PIN_12;//Свет
+	Fram::elementFram(5, 1);
+	//Heat::ajustHeat595(modeBack);//Запускаем продолжение приготовления.
 return true;
 }
 

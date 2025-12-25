@@ -8,8 +8,11 @@
 #include <SetTimer.hpp>
 #include "Button.hpp"
 //----------------------------------------------------------Increment времени----------------------------------
-void SetTimer::IncrementCookTime() {
-	number_Iterator_Increment = number_Iterator_Increment || (minCounterInc = 0, true);
+void SetTimer::IncrementCookTime(){
+	if(!number_Iterator_Increment){
+	    minCounterInc = 0;
+	    number_Iterator_Increment = true;
+	}
 	hours = minCounterInc / 60;   //Часы
 	minutes = minCounterInc % 60;   //минуты
 	Fram::elementFram(2, minutes); //Записываем текущее время - минуты,
@@ -31,7 +34,10 @@ void SetTimer::IncrementCookTime() {
 //--------------------------------------------------------Decrement времени---------------------------------------------
 void SetTimer::DecrementCookTime() {
 	// Первый вход — устанавливаем флаг первого прохода и начальное значение времени
-	number_Iterator_Decrement = number_Iterator_Decrement ? number_Iterator_Decrement : (minCounterDec = Button::timerCntEncoder, true);
+	if (!number_Iterator_Decrement) {
+	    minCounterDec = Button::timerCntEncoder;
+	    number_Iterator_Decrement = true;
+	}
 	bool hasTime = minCounterDec > 0;	//Если время еще не вышло считаем дальше
 	hasTime && ( // Используем логическое умножение для условного выполнения блока
 			(hours = minCounterDec / 60),   //Часы

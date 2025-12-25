@@ -139,10 +139,10 @@ int main(void)
 	GPIOB->BSRR= GPIO_PIN_7 << 16U;	//HC595 вкл
 	__HAL_DBGMCU_FREEZE_IWDG(); //Останавливаем WatchDog в дебаггере
 	TIM2->CNT = 180;
+	Protection::Init();
 	vu8 fram5rd = Fram::elementFram(5); //Читаем из FRAM
-	//fram5rd = 0;
-	bool isFram5rd = (fram5rd == 1);
-	isFram5rd && Control::backInfo();
+	bool isFram5rd = (fram5rd == 1);//Если fram5rd == 1 то isFram5rd == true
+	isFram5rd && Control::backInfo();//Если isFram5rd == true то переходим к Control::backInfo();
 /*-------------TIMERS - Нужно проверить
 
  TIM2 - Энкодер
@@ -209,14 +209,9 @@ GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 Button button;
 Control control;
 FryModeLambda fryModeLambda;
-
 MelodyPlayer::playPodmoskovnye();
-
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
-//EXTI->IMR |= EXTI_IMR_MR15;//Разрешаем прерывание EXTI15
-Protection::Init();
 GPIOB->BSRR = GPIO_PIN_9;
-bool protection_is_active = false;
 
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима

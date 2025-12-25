@@ -54,6 +54,7 @@ isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonReg
 		HAL_Delay(2000);
 		GPIOC->BSRR = GPIO_PIN_13<< 16U;//Выключить реле выключения автомата
 		GPIOB->BSRR = GPIO_PIN_9 << 16U;
+		GPIOA->BSRR = GPIO_PIN_12;//Свет
 	    }
 }
 //-----------------------Второй режим кнопки----------------------------
@@ -139,7 +140,7 @@ void Button::zeroing() {
 	SetTimer::minutesSet = 0;
 	SetTimer::memTime = 0;
 	Heat::all_off(); //Выключение всего
-	SetTimer::number_Iterator_Increment = false;
+	//SetTimer::number_Iterator_Increment = false;
 	Button::dirTime = false;
 	SetTimer::secondCounter = 0;
 	SetTimer::minCounterInc = 0;
