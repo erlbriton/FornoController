@@ -169,24 +169,24 @@ int main(void)
  A14- SWCLK
  A15- Enc1
  ---------------Заполнение массива UART для отсылки в дисплей----------------
- min          = buf_485[1]
- dec_min      = buf_485[2]
- one_h        = buf_485[3]
- dec_h        = buf_485[4]
- temp1        = buf_485[5]
- temp2        = buf_485[6]
- temp3        = buf_485[7]
- tempset1     = buf_485[8]
- tempset2     = buf_485[9]
- tempset3     = buf_485[10]
- set          = buf_485[11] - режим
- watch        = buf_485[12] - точки в часах
- fire         = buf_485[13]
- fire_90      = buf_485[14]
- fire_180     = buf_485[15]
- tmp_plt1     = buf_485[16]
- tmp_plt2     = buf_485[17]
- mode_2       = buf_485[18] - рамка вокруг часов
+ 1 - min          = buf_485[1]
+ 2 - dec_min      = buf_485[2]
+ 3 - one_h        = buf_485[3]
+ 4 - dec_h        = buf_485[4]
+ 5 - temp1        = buf_485[5]
+ 6 - temp2        = buf_485[6]
+ 7 - temp3        = buf_485[7]
+ 8 - tempset1     = buf_485[8]
+ 9 - tempset2     = buf_485[9]
+ 10- tempset3     = buf_485[10]
+ 11- set          = buf_485[11] - режим
+ 12- watch        = buf_485[12] - точки в часах
+ 13- fire         = buf_485[13]
+ 14- fire_90      = buf_485[14]
+ 15- fire_180     = buf_485[15]
+ 16- tmp_plt1     = buf_485[16]
+ 17- tmp_plt2     = buf_485[17]
+ 18- mode_2       = buf_485[18] - рамка вокруг часов
 
  ---------------------------------Fram память---------------------------------------
 	0 - Заданная температура

@@ -26,29 +26,27 @@ uint8_t Button::scanButton() {
 //-----------------------------------------1-й режим-------------------------------------------------
 void Button::buttonRegimOne() {
 	if(flagOneButton == false){
-			SetTimer::memTime = 0;
-			buf_485[1] = 0;
-			buf_485[2] = 0;
-			HAL_UART_Transmit_IT(&huart3, buf_485, 20);
-		}
 	vu8 settedMode = Fram::elementFram(1);
-	buf_485[12] = 0;//Точки в часах
-	(flagSoundButton[0] == 0) && (Heat::spOn(),//Подаем звук нажатой кнопки
-	flagSoundButton[0] = 1,
-	flagSoundButton[1] = 0,
-	flagSoundButton[2] = 0);
+	buf_485[12] = 0;//Останавливаем точки в часах
+	//if (flagSoundButton[0] == 0) {
+	    Heat::spOn();           // Подаем звук нажатой кнопки
+	    flagSoundButton[0] = 1; // Устанавливаем флаг, что звук уже прозвучал
+	    flagSoundButton[1] = 0; // Сбрасываем остальные флаги
+	    flagSoundButton[2] = 0;
+	//}
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-bool isSettedMode = (settedMode == set || settedMode == light);
-isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonRegim  сразу =2(время выставлять не нужно)
-    //encCount();
+bool isSettedMode = (settedMode == set || settedMode == light);//Если режим  set или light то isSettedMode == true
+isSettedMode && (buttonRegim = 2);//Если режим "light" или  set - то buttonRegim  сразу = 2(время выставлять не нужно)
 	zeroing(); //Обнуляем все необходимые флаги
 	GPIOA->BSRR |= GPIO_PIN_12;//Включаем свет
 	pass3Button = false; //Обнуляем флаг прохода режима 3 кнопки(для режима "PRE")
 	HAL_TIM_Base_Stop_IT(&htim10);
 	flagOneButton = true;
+	Fram::elementFram(5, 0);//Снимаем флаг рабочего режима
 	if(!Protection::protection_is_active){
-	            	Protection::Start();//Запускаем проверку тока в тенах
-	            	}
+	    Protection::Start();//Запускаем проверку тока в тенах
+	}
+}
 	if (Protection::GetState() == SIGNAL_PRESENT) {//Реле залипло!
 		GPIOC->BSRR = GPIO_PIN_13;//Включить реле выключения автомата
 		HAL_Delay(2000);
@@ -59,56 +57,61 @@ isSettedMode && (buttonRegim = 2);//Если режим "light" - то buttonReg
 }
 //-----------------------Второй режим кнопки----------------------------
 void Button::buttonRegimTwo() {//Проверка выключенного режима Pre
-    vu8 settedMode = Fram::elementFram(1);
-   ( (settedMode == pre) && (buttonRegim = 2)) || (executeMainRegimLogic(), true);//Если режим "pre", то сразу прыгаем во 2-й режим кнопки(время выставлять не нужно)
+	vu8 settedMode = Fram::elementFram(1);
+	    if (settedMode == pre) {
+	        buttonRegim = 2;// Если режим "pre", сразу переходим ко второму состоянию кнопки
+	    } else {
+	        executeMainRegimLogic();// В противном случае выполняем основную логику режима
+	    }
 }
 bool Button::executeMainRegimLogic() {//Метод второго и следующих проходов
     if (firstCall) TIM2->CNT = 0;// Первый проход
-    bool isFlagSoundButton = (flagSoundButton[1] != true);
+    bool isFlagSoundButton = (flagSoundButton[1] != true);//isFlagSoundButton противоположно flagSoundButton[1]
     isFlagSoundButton && (Heat::spOn(), flagSoundButton[1] = 1, flagSoundButton[2] = 0);
+   // !flagSoundButton[1] && (Heat::spOn(), flagSoundButton[1] = 1, flagSoundButton[2] = 0);
     pass3Button = false;
     encCount(); // Устанавливаем время (или не устанавливаем)
     timerCntEncoder = TIM2->CNT;
     buf_485[18] = 1;//Рамка вокруг часов при установки времени приготовления
-    HAL_UART_Transmit_IT(&huart3, buf_485, 20); // Передаем на дисплей
+    //HAL_UART_Transmit_IT(&huart3, buf_485, 20); // Передаем на дисплей
     SetTimer::setTime();
     firstCall = false;
     dirTime = (timerCntEncoder != 0);//Задаем направление счета времени
     return dirTime;
 }
-//--------------3-й режим без if else---------------------------------------------------------
+//--------------3-й режим---------------------------------------------------------
 void Button::buttonRegimThree() {
     Fram::elementFram(0, cntEncoder);
     TIM2->CNT = cntEncoder; // Пишем в счетчик энкодера и во FRAM
     Fram::fram_wr_massive(); // то, что было запомнено при установке температуры
-    // Проверка флага звука кнопки
-    (flagSoundButton[2] == 0) && (Heat::spOn(), flagSoundButton[2] = 1, flagSoundButton[0] = 0);
-    // Если первый проход
-    (!pass3Button) && ([&]() {
-        vu8 settedMode = Fram::elementFram(1);
+    if (!flagSoundButton[2]) {
+        Heat::spOn();           // Подаем звук
+        flagSoundButton[2] = 1; // Устанавливаем флаг поданного сигнала при переходе на 3-й режим кнопки
+        flagSoundButton[0] = 0; // Сбрасываем флаг поданного сигнала 1-го режима кнопки
+    }
+    if (!pass3Button) {//Блок инициализации при первом проходе
+        vu8 settedMode = Fram::elementFram(1);// Читаем режим из памяти
         HAL_TIM_Base_Start_IT(&htim10);
-        Fram::elementFram(0, (settedMode != dry) ? FryModeLambda::firstTemp : FryModeLambda::firstTempDry);
-        pass3Button = true;
-        pass1Button = 0;} (), true);
+        uint8_t tempValue;
+        if (settedMode != dry) {//Определяем начальную температуру
+            tempValue = FryModeLambda::firstTemp;
+        } else {
+            tempValue = FryModeLambda::firstTempDry;
+        }
+        Fram::elementFram(0, tempValue);
+        pass3Button = true;//Помечаем, что первый проход выполнен
+    }
     Fram::elementFram(5, 1); // Включен режим регулирования
-    Fram::fram_wr_massive();
-    //Fram::fram_rd_massive();
     buf_485[12] = 1; // Включаем точки в часах
     HAL_Delay(50);
     Fram::framRD0byte();
-//   if(Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10){
-//    Heat::ajustHeat595(Fram::elementFram(1)); // Переходим к регулированию в выбранном режиме
-//    buf_485[18] = 0; // Выключаем рамку вокруг часов
-//   }
-//  (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) && (Heat::ajustHeat595(Fram::elementFram(1)),
-//		  (buf_485[18] = 0), (Protection::Stop()));
-  if (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) {
-	  uint8_t dfds = Fram::elementFram(1);
+    flagOneButton = false;//Включаем режим 1-го прохода 1-го режима кнопки
+  if (Fram::elementFram(1) != 3 && Fram::elementFram(1) != 10) {//Если режим не set  и light
       Heat::ajustHeat595(Fram::elementFram(1));//запускаем нагрев в выбранном режиме
       buf_485[18] = 0;
       Protection::Stop();//Выключаем проверку тока в тенах
       GPIOB->BSRR = GPIO_PIN_9;
-      //Protection::protection_is_active = false;
+      Protection::protection_is_active = false;
   }
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -123,7 +126,6 @@ const std::array<std::function<void(Button*)>, 3> Button::arrButtonRegim = {
 };
 //-------------------------------------Выбор режима кнопки-------------------------------------------
 bool Button::executeButtonRegim(vu8 index)  {
-	//(index >= 0 && index < arrButtonRegim.size()) && arrButtonRegim[index](this);//Нужно попробовать такой вид
     if (index >= 0 && index < arrButtonRegim.size()) {
         arrButtonRegim[index](this); //Передаём `this` в лямбду
     }
@@ -161,30 +163,7 @@ void Button::zeroing() {
 	buf_485[14] = 0; //Стираем огонь
 	buf_485[15] = 0; //Стираем огонь
 }
-//----------------------------------------------------------------Задаем температуру-----------------------------------------------------------------------
-//vu8 Button::encCount() {
-//	vu8 settedMode = Fram::elementFram(1); // Читаем устaновленный режим из Fram
-//	vu8 byte0Fram = 0;
-//	(buttonRegim != 1)
-//			&& (cntEncoder = TIM2->CNT, // Количество импульсов, посчитанных энкодером
-//	(encMemory != cntEncoder && encDone == true) && ( // Если данные изменились и был поворот энкодера — пишем в индикатор и FRAM
-//			encMemory = cntEncoder, // Запоминаем значение, посчитанное энкодером, чтобы было с чем сравнивать
-//			Fram::elementFram(0, cntEncoder), // Записываем в массив для FRAM значение счётчика энкодера
-//			//Fram::fram_wr_massive(), // Записываем массив во FRAM
-//			Fram::fram_rd_massive(), // Читаем массив обратно (если нужно)
-//			(settedMode != set) && ( // Выводим, если не режим "Set"
-//					byte0Fram = Fram::framRD0byte(), buf_485[0] = buf_485[19] =151, // Записываем в массив для передачи в дисплей по RS-485
-//					buf_485[8] = byte0Fram % 100 % 10, // Единицы
-//					buf_485[9] = byte0Fram % 100 / 10,    // Десятки
-//					(buf_485[10] = byte0Fram / 100)          // Сотни
-//					)),
-//	encDone = false, (HAL_UART_Transmit_IT(&huart3, buf_485, 20))//Передаем на дисплей               // Обнуляем флаг прокрутки
-//			);
-//	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2), // Очищаем бит EXTI_PR
-//	NVIC_ClearPendingIRQ(EXTI2_IRQn);    // Очищаем бит NVIC_ICPRx
-//	HAL_NVIC_EnableIRQ(EXTI2_IRQn);    // Включаем внешнее прерывание
-//	return cntEncoder; //Если данные не изменились или не было поворота энкодера - ничего не делаем, чтобы не было мерцаний и ошибок индикатора
-//}
+//----------------------------------------------------------------Задаем температуру-----------------
 vu8 Button::encCount() {
     vu8 settedMode = Fram::elementFram(1); // Читаем установленный режим из Fram
     vu8 byte0Fram = 0;
@@ -206,43 +185,19 @@ vu8 Button::encCount() {
                 buf_485[9] = (byte0Fram / 10) % 10;   // Десятки
                 buf_485[10] = byte0Fram / 100;        // Сотни
             }
-
-            // Отправляем обновленные данные на дисплей
-            HAL_UART_Transmit_IT(&huart3, buf_485, 20);
-
-            // Сбрасываем флаг прокрутки только после обработки изменения
-            encDone = false;
+            encDone = false;//Сбрасываем флаг прокрутки только после обработки изменения
         }
     }
     // Блок очистки прерываний (выполняется всегда)
     //__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2);
     //NVIC_ClearPendingIRQ(EXTI2_IRQn);
     HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-
     return cntEncoder;
 }
 //------------------------------------Геттеры и сеттеры----------------------------------------------
-//vu8 Button::getCntEncoder() const{//Геттер CntEncoder
-//	return cntEncoder;
-//}
-//void Button::setCntEncoder(vu8 newCntEncoder){//Сеттер CntEncoder
-//	cntEncoder = newCntEncoder;
-//}
-vu8 Button::getEncMemory() const{//Геттер EncMemory
-	return encMemory;
-}
-void Button::setEncMemory(vu8 newEncMemory){//Сеттер EncMemory
-	encMemory = newEncMemory;
-}
-//bool Button::isEncDone() const{//Геттер EncDone
-//	return encDone;
-//}
 void Button::isEncDone(bool newEncDone){//Сеттер EncDone
 	encDone = newEncDone;
  }
-//vu8 Button::getButtonRegim() const{//Геттер ButtonRegim
-//	return buttonRegim;
-//}
 bool Button::setButtonRegim(vu8 newButtonRegim){//Сеттер buttonRegim
 	buttonRegim = newButtonRegim;
 	return true;

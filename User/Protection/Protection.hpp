@@ -52,7 +52,7 @@ public:
 	   inline static const uint32_t SIGNAL_EXTI_LINE = EXTI_LINE_15;
 
 	public:
-	   volatile inline static  bool protection_is_active;
+	   volatile inline static  bool protection_is_active;//Флаг вкл-выкл защиты
 
 	virtual ~Protection();
 };

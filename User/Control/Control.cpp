@@ -58,6 +58,8 @@ bool Control::backInfo() {
 	vu8 temperFornoBack = TIM2->CNT = Fram::elementFram(0); //Восстанавливаем заданную температуру
 	vu8 modeBack = Fram::elementFram(1); //Восстанавливаем номер режима приготовления
 	Button::dirTime = Fram::elementFram(4); //Направление счета времени
+	SetTimer::minCounterDec = (Fram::elementFram(6) << 8) | Fram::elementFram(7);//Соединяем старший и младший байты счетчика минут
+	SetTimer::minCounterInc = SetTimer::minCounterDec;//Счетчик инкремента и декремента времени здесь равны
 	buf_485[0] = buf_485[18] = 151; //Проверочный код посылки
 //#################################Для калибровки###################################################
 //	buf_485[1] = framRdWr.massive_rd[2] % 10; //Единицы минут
@@ -69,15 +71,13 @@ bool Control::backInfo() {
 	buf_485[9] = temperFornoBack % 100 / 10; //...десятки ........
 	buf_485[10] = temperFornoBack / 100; //...сотни заданной температуры
 	buf_485[11] = modeBack; //Режим приготовления
-	SetTimer::minCounterDec = (Fram::elementFram(6) << 8) | Fram::elementFram(7);//Соединяем старший и младший байты счетчика минут
-	SetTimer::minCounterInc = SetTimer::minCounterDec;//Счетчик инкремента и декремента времени здесь равны
 	Button::setButtonRegim(2);//Восстанавливаем 3-й режим кнопки
 	SetTimer::number_Iterator_Decrement = true;//Восстанавливаем второй проход инкремента времени
 	SetTimer::number_Iterator_Increment = true;//Восстанавливаем второй проход декремента времени
 	FryModeLambda::modeCookOld = modeBack; //Восстанавливаем информацию, что проход по установке режима уже сделан(ПРОВЕРИТЬ)
 	Fram::elementFram(5, 0);//Снимаем флаг "Сброс во время работы"
 	GPIOA->BSRR = GPIO_PIN_12;//Свет
-	Fram::elementFram(5, 1);
+	Fram::elementFram(5, 1);//Включаем флаг рабочего режима
 	//Heat::ajustHeat595(modeBack);//Запускаем продолжение приготовления.
 return true;
 }

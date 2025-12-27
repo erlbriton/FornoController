@@ -12,17 +12,11 @@
 #include "flashdata.hpp"
 #include "functional"
 #include "Protection.hpp"
-//#include "Control.hpp"
-//#include "Heat.hpp"
-
 
 class Button {
 private:
 	static inline vu8 encMemory;
 	static inline volatile bool encDone = false;//Флаг прокрутки энкодера
-	 //inline static vu8 buttonRegim = 0;
-
-//protected:
 	static const std::array<std::function<void(Button*)>, 3> arrButtonRegim;//Массив элементов типа "std::function<void()>" в контейнере "std::array<>"
 	static inline bool flagButton = false;
 	static inline bool pass1Button = false;
@@ -40,9 +34,6 @@ public:
 	static bool executeMainRegimLogic();//Метод второго и следующих проходов
 	//--------------------------------Геттеры и сеттеры---------------------------------------------
 	static void isEncDone(bool newEncDone);
-
-    vu8 getEncMemory() const;
-	void setEncMemory(vu8);
 
 	bool getEncDone() const;//Читаем флаг прокрутки энкодера
 	void setEncDone(bool);//Устанавливаем флаг прокрутки энкодера
