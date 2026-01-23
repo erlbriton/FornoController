@@ -20,7 +20,15 @@ typedef  uint8_t vu8;
 typedef  uint16_t vu16;
 typedef  uint32_t vu32;
 
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
+
 extern vu8 buf_485[ ]; //Массив для посылки в дисплей========================================================
+
+//#ifdef __cplusplus
+//}
+//#endif
 
 enum {
 	off,
