@@ -57,7 +57,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//extern "C"
+
 vu8 buf_485[20];//Массив для посылки в дисплей
 /* USER CODE END PV */
 
