@@ -76,7 +76,6 @@ void Control::backInfo() {
 	buf_485[11] = modeBack; //Режим приготовления
 	Button::setButtonRegim(2);//Восстанавливаем 3-й режим кнопки
 	SetTimer::number_Iterator_Decrement = true;//Восстанавливаем второй проход инкремента времени
-	bool qwer = SetTimer::number_Iterator_Decrement;
 	SetTimer::number_Iterator_Increment = true;//Восстанавливаем второй проход декремента времени
 	FryModeLambda::modeCookOld = modeBack; //Восстанавливаем информацию, что проход по установке режима уже сделан(ПРОВЕРИТЬ)
 	GPIOA->BSRR = GPIO_PIN_12;//Свет

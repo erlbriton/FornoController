@@ -129,7 +129,7 @@ void TimerManager::handleTIM5() {
 	Protection::TIM5_Handler();
 }
 void TimerManager::handleTIM11() {
-	MelodyPlayer::handleTimerInterrupt();
+	//MelodyPlayer::handleTimerInterrupt();
 }
 //---------------------EXTIManager-----------------------------
 void EXTIManager::handleEXTIInterrupt(uint16_t GPIO_Pin) {

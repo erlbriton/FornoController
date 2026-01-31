@@ -68,11 +68,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define Off_Pin GPIO_PIN_13
-#define Off_GPIO_Port GPIOC
 #define Idig_Pin GPIO_PIN_15
 #define Idig_GPIO_Port GPIOC
 #define Idig_EXTI_IRQn EXTI15_10_IRQn
+#define Enc_2_Pin GPIO_PIN_1
+#define Enc_2_GPIO_Port GPIOA
 #define data1820_Pin GPIO_PIN_2
 #define data1820_GPIO_Port GPIOA
 #define ADC_Temp_Pin GPIO_PIN_3
@@ -125,8 +125,6 @@ void Error_Handler(void);
 #define exti_Enc_2_Pin GPIO_PIN_2
 #define exti_Enc_2_GPIO_Port GPIOD
 #define exti_Enc_2_EXTI_IRQn EXTI2_IRQn
-#define Enc_2_Pin GPIO_PIN_3
-#define Enc_2_GPIO_Port GPIOB
 #define MOSI_Pin GPIO_PIN_5
 #define MOSI_GPIO_Port GPIOB
 #define Button_Pin GPIO_PIN_8

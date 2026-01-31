@@ -118,8 +118,15 @@ bool Heat::checkProtectionTriggers(vu8 dataTransmit){
 }
 //------------------------------Подаем сигнал предварительного нагрева-------------------------------
 void Heat::checkAndPlaySound(vu8 setTemp) {
-    (Fram::elementFram(1) == 1 && Heat::soundPre == 0 && ((setTemp - Control::ovenTemper) <= HysteresisTemp())) &&
-    		(MelodyPlayer::playPodmoskovnye(),//Играет "Подмосковные вечера"
-            Heat::soundPre = true);//Флаг "Звук предварительного нагрева подан"
+    // 1. Проверяем все условия для срабатывания звука
+    if (Fram::elementFram(1) == 1 &&
+        Heat::soundPre == 0 &&
+        ((setTemp - Control::ovenTemper) <= HysteresisTemp()))
+    {
+        // Играет "Подмосковные вечера"
+       // MelodyPlayer::playPodmoskovnye();
+        // Устанавливаем флаг, чтобы звук не повторялся
+        Heat::soundPre = true;
+    }
 }
 

@@ -119,6 +119,7 @@ int main(void)
   MX_TIM11_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
+  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
 	LL_SPI_Enable(SPI3);
 	//---------------------Сброс HC595--------------------------------
@@ -215,7 +216,7 @@ GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 //Button button;
 //Control control;
 //FryModeLambda fryModeLambda;
-MelodyPlayer::playPodmoskovnye();
+//MelodyPlayer::playPodmoskovnye();
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 GPIOB->BSRR = GPIO_PIN_9;
 	}
@@ -234,7 +235,7 @@ while (1) {
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей
 			HAL_Delay(100);			//Без этой паузы дисплей не успевает
-			HAL_IWDG_Refresh(&hiwdg); //Обнуляем watchdog
+			//HAL_IWDG_Refresh(&hiwdg); //Обнуляем watchdog
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
