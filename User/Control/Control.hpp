@@ -29,7 +29,7 @@ public:
 	inline static vu32 adcTemp[2] = {0, };
 	static vu32 bakeTemper();
 	static vu16 readAdc(vu8); //Читаем задатчик режима
-	static bool backInfo(void);
+	static void backInfo(void);
 	bool isEncDone() const;//Геттер EncDone
 	void isEncDone(bool newEncDone);//Сеттер EncDone
 private:

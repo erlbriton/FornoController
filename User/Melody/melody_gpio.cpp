@@ -15,7 +15,7 @@ size_t MelodyPlayer::melodyLength = 0;
 void MelodyPlayer::setTim11Frequency(uint16_t frequency) {
     if (frequency == 0) return;
 
-    uint32_t timerClock = 84000000; // APB2 = 84 MHz
+    //uint32_t timerClock = 84000000; // APB2 = 84 MHz
     uint32_t prescaler = 83;        // Делим на 84 → 1 МГц
     uint32_t period = (1000000 / (frequency * 2)) - 1; // в полупериодах
 

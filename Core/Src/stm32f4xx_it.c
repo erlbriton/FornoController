@@ -94,16 +94,16 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
-	 volatile uint32_t cfsr = SCB->CFSR;    // Читаем CFSR (Configurable Fault Status Register)
-		  volatile uint32_t bus_fault = (cfsr >> 8) & 0xFF;  // Ошибки шины (Bus Fault)
-		  volatile uint32_t mem_fault = (cfsr >> 0) & 0xFF;
+//	 volatile uint32_t cfsr = SCB->CFSR;    // Читаем CFSR (Configurable Fault Status Register)
+//		  volatile uint32_t bus_fault = (cfsr >> 8) & 0xFF;  // Ошибки шины (Bus Fault)
+//		  volatile uint32_t mem_fault = (cfsr >> 0) & 0xFF;
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-	  volatile uint32_t cfsr = SCB->CFSR;    // Читаем CFSR (Configurable Fault Status Register)
-	  volatile uint32_t bus_fault = (cfsr >> 8) & 0xFF;  // Ошибки шины (Bus Fault)
-	  volatile uint32_t mem_fault = (cfsr >> 0) & 0xFF;
+//	  volatile uint32_t cfsr = SCB->CFSR;    // Читаем CFSR (Configurable Fault Status Register)
+//	  volatile uint32_t bus_fault = (cfsr >> 8) & 0xFF;  // Ошибки шины (Bus Fault)
+//	  volatile uint32_t mem_fault = (cfsr >> 0) & 0xFF;
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }

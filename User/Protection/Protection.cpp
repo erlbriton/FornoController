@@ -85,7 +85,8 @@ void Protection::EXTI_Handler() {
 
             // 1. Считаем импульсы до REQUIRED_PULSE_COUNT (20)
             if (Pulse_Confirm_Counter < REQUIRED_PULSE_COUNT) {
-            	Pulse_Confirm_Counter++;
+            	//Pulse_Confirm_Counter++;
+            	Pulse_Confirm_Counter = Pulse_Confirm_Counter + 1;
             }
 
             // 2. Если 20 импульсов получено, подтверждаем наличие тока.
@@ -116,7 +117,7 @@ void Protection::TIM5_Handler() {
 
         // 1. Увеличение счетчика тишины (если он еще не достиг 200)
         if (timeout_tick_counter < TIMEOUT_TICKS) {
-            timeout_tick_counter++;
+        	timeout_tick_counter = timeout_tick_counter +1;
         }
 
         // 2. Проверка Истечения Таймаута (200 тиков = 2 секунды)

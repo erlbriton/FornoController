@@ -79,25 +79,49 @@ void TimerManager::handleTIM9() {
 void TimerManager::handleTIM7() {
     GPIOB->BSRR = ((GPIOB->ODR & GPIO_PIN_15) << 16U) | (~GPIOB->ODR & GPIO_PIN_15);
 }
+
 void TimerManager::handleTIM12() {
     num = 1 - num;
     TIM7->CR1 = TIM7->CR1 + recount[num]; // Пуск/стоп TIM7
-    (num) && (GPIOB->BSRR |= GPIO_PIN_15 << 16U); // Спикер выкл
-    numSound++;
-    (numSound == 2) && (HAL_TIM_Base_Stop_IT(&htim7),
-                                          HAL_TIM_Base_Stop_IT(&htim12),
-                                          GPIOB->BSRR |= GPIO_PIN_15 << 16U, // Спикер выкл
-                                          numSound = 0);
+    //(num) && (GPIOB->BSRR |= GPIO_PIN_15 << 16U); // Спикер выкл
+    if (num != 0) {
+        GPIOB->BSRR = (uint32_t)GPIO_PIN_15 << 16U; // Спикер выкл
+    }
+    numSound = numSound + 1;
+//    (numSound == 2) && (HAL_TIM_Base_Stop_IT(&htim7),
+//                                          HAL_TIM_Base_Stop_IT(&htim12),
+//                                          GPIOB->BSRR |= GPIO_PIN_15 << 16U, // Спикер выкл
+//                                          numSound = 0);
+    if (numSound == 2) {
+        HAL_TIM_Base_Stop_IT(&htim7);
+        HAL_TIM_Base_Stop_IT(&htim12);
+        GPIOB->BSRR = (uint32_t)GPIO_PIN_15 << 16U; // Спикер выкл
+        numSound = 0;
+    }
 }
 //-----------------Время-------------------------------------------------
+//void TimerManager::handleTIM10() {
+//    SetTimer::totalTime += 1; // Общее время нагрева
+//    SetTimer::secondCounter += 1;
+//    (SetTimer::secondCounter == 60) &&
+//    		( SetTimer::minCounterInc += 1,
+//    		 SetTimer::minCounterDec -= 1,
+//			 SetTimer::secondCounter = 0);
+//}
+
 void TimerManager::handleTIM10() {
-    SetTimer::totalTime += 1; // Общее время нагрева
-    SetTimer::secondCounter += 1;
-    (SetTimer::secondCounter == 60) &&
-    		( SetTimer::minCounterInc += 1,
-    		 SetTimer::minCounterDec -= 1,
-			 SetTimer::secondCounter = 0);
+    // Используем явное присваивание для исключения предупреждений volatile
+    SetTimer::totalTime = SetTimer::totalTime + 1; // Общее время нагрева
+    SetTimer::secondCounter = SetTimer::secondCounter + 1;
+
+    // Классическое условие вместо логического &&
+    if (SetTimer::secondCounter == 60) {
+        SetTimer::minCounterInc = SetTimer::minCounterInc + 1;
+        SetTimer::minCounterDec = SetTimer::minCounterDec - 1;
+        SetTimer::secondCounter = 0;
+    }
 }
+
 void TimerManager::handleTIM6() {
 	(Control::ovenTemper >= Heat::tempMax) && (Button::regim1Button(), 0);
 }

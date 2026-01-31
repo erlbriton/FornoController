@@ -142,8 +142,13 @@ int main(void)
 	TIM2->CNT = 180;
 	Protection::Init();
 	vu8 fram5rd = Fram::elementFram(5); //Читаем из FRAM
-	bool isFram5rd = (fram5rd == 1);//Если fram5rd == 1 то isFram5rd == true
-	isFram5rd && Control::backInfo();//Если isFram5rd == true то переходим к Control::backInfo();
+	Button button;
+	Control control;
+	FryModeLambda fryModeLambda;
+	if(fram5rd){
+		Control::backInfo();//Восстанавливаем работу
+	}
+	else{
 /*-------------TIMERS - Нужно проверить
 
  TIM2 - Энкодер
@@ -207,20 +212,20 @@ int main(void)
 HAL_Delay(500);
 HAL_TIM_Base_Stop_IT(&htim7);
 GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
-Button button;
-Control control;
-FryModeLambda fryModeLambda;
+//Button button;
+//Control control;
+//FryModeLambda fryModeLambda;
 MelodyPlayer::playPodmoskovnye();
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 GPIOB->BSRR = GPIO_PIN_9;
+	}
 
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
 			Fram::elementFram(1, modeCookAveADC);
-			Button::encCount();//Задаем температуру
+     		Button::encCount();//Задаем температуру
 			Fram::elementFram(0);
-			uint8_t gfd = Fram::elementFram(1);
 			if(Fram::elementFram(1) != 0){//Если режим не Off ...
 				button.scanButton();//... сканируем кнопку и ...
 				button.executeButtonRegim(button.buttonRegim);//...выбираем режим кнопки
