@@ -114,7 +114,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM9_Init();
   MX_TIM12_Init();
-  MX_IWDG_Init();
+ // MX_IWDG_Init();
   MX_ADC2_Init();
   MX_TIM11_Init();
   MX_TIM4_Init();
@@ -220,7 +220,7 @@ GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 GPIOB->BSRR = GPIO_PIN_9;
 	}
-
+	//MelodyPlayer::playPodmoskovnye();
 while (1) {
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
@@ -235,6 +235,7 @@ while (1) {
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей
 			HAL_Delay(100);			//Без этой паузы дисплей не успевает
+			//MelodyPlayer::processNextNoteAsync();
 			//HAL_IWDG_Refresh(&hiwdg); //Обнуляем watchdog
     /* USER CODE END WHILE */
 

@@ -72,3 +72,8 @@ void MelodyPlayer::setFrequency(uint16_t frequency) {
         currentNoteIdx++;
     }
 
+    void MelodyPlayer::playPodmoskovnye() {
+        currentNoteIdx = 0;   // Сбрасываем на начало
+        noteTimeout = 0;      // Сбрасываем таймер, чтобы заиграло мгновенно
+    }
+
