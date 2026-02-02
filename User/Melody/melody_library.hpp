@@ -1,3 +1,4 @@
+//
 #ifndef MELODY_MELODY_LIBRARY_HPP_
 #define MELODY_MELODY_LIBRARY_HPP_
 
@@ -10,7 +11,7 @@ namespace MelodyLibrary {
 
     // Подмосковные вечера — первые две строчки мелодии
     const uint16_t PodmoskovnyeVechera[ ] = {
-    		392, 440, 494, 523, 587, 587, 523, 494,  // 1-8
+    		        394, 440, 494, 523, 587, 587, 523, 494,  // 1-8
     		        659, 659, 587, 587,                       // 9-12
     		        440, 440, 440, R,                         // 13-16
     		        523, 659, 784, 784,                       // 17-20

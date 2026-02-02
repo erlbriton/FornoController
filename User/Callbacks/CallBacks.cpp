@@ -36,7 +36,7 @@ const TimerManager::TimerMap TimerManager::timerMap[ ] = {
     { TIM7,  &TimerManager::handleTIM7  },
     { TIM9,  &TimerManager::handleTIM9  },
     { TIM10, &TimerManager::handleTIM10 },
-	{ TIM11, &TimerManager::handleTIM11 },
+	//{ TIM11, &TimerManager::handleTIM11 },
     { TIM12, &TimerManager::handleTIM12 },
 };
 
@@ -62,18 +62,18 @@ void TimerManager::handleTIM4() {
 	//HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);//Запрещаем прерывание EXTI15
 }
 void TimerManager::handleTIM9() {
-    num = 1 - num;
-    TIM7->CR1 = TIM7->CR1 + recount[num]; // Пуск/стоп TIM7
-    if (num) {
-        GPIOB->BSRR |= GPIO_PIN_15 << 16U; // Спикер выкл
-    }
-    numSound++;
-    if (numSound == 8) {
-        HAL_TIM_Base_Stop_IT(&htim7);
-        HAL_TIM_Base_Stop_IT(&htim9);
-        GPIOB->BSRR |= GPIO_PIN_15 << 16U; // Спикер выкл
-        numSound = 0;
-    }
+//    num = 1 - num;
+//    TIM7->CR1 = TIM7->CR1 + recount[num]; // Пуск/стоп TIM7
+//    if (num) {
+//        GPIOB->BSRR |= GPIO_PIN_15 << 16U; // Спикер выкл
+//    }
+//    numSound++;
+//    if (numSound == 8) {
+//        HAL_TIM_Base_Stop_IT(&htim7);
+//        HAL_TIM_Base_Stop_IT(&htim9);
+//        GPIOB->BSRR |= GPIO_PIN_15 << 16U; // Спикер выкл
+//        numSound = 0;
+//    }
 }
 //-------------------------Параметры звука переключения режимов и кнопки
 void TimerManager::handleTIM7() {
@@ -81,23 +81,23 @@ void TimerManager::handleTIM7() {
 }
 
 void TimerManager::handleTIM12() {
-    num = 1 - num;
-    TIM7->CR1 = TIM7->CR1 + recount[num]; // Пуск/стоп TIM7
-    //(num) && (GPIOB->BSRR |= GPIO_PIN_15 << 16U); // Спикер выкл
-    if (num != 0) {
-        GPIOB->BSRR = (uint32_t)GPIO_PIN_15 << 16U; // Спикер выкл
-    }
-    numSound = numSound + 1;
-//    (numSound == 2) && (HAL_TIM_Base_Stop_IT(&htim7),
-//                                          HAL_TIM_Base_Stop_IT(&htim12),
-//                                          GPIOB->BSRR |= GPIO_PIN_15 << 16U, // Спикер выкл
-//                                          numSound = 0);
-    if (numSound == 2) {
-        HAL_TIM_Base_Stop_IT(&htim7);
-        HAL_TIM_Base_Stop_IT(&htim12);
-        GPIOB->BSRR = (uint32_t)GPIO_PIN_15 << 16U; // Спикер выкл
-        numSound = 0;
-    }
+//    num = 1 - num;
+//    TIM7->CR1 = TIM7->CR1 + recount[num]; // Пуск/стоп TIM7
+//    //(num) && (GPIOB->BSRR |= GPIO_PIN_15 << 16U); // Спикер выкл
+//    if (num != 0) {
+//        GPIOB->BSRR = (uint32_t)GPIO_PIN_15 << 16U; // Спикер выкл
+//    }
+//    numSound = numSound + 1;
+////    (numSound == 2) && (HAL_TIM_Base_Stop_IT(&htim7),
+////                                          HAL_TIM_Base_Stop_IT(&htim12),
+////                                          GPIOB->BSRR |= GPIO_PIN_15 << 16U, // Спикер выкл
+////                                          numSound = 0);
+//    if (numSound == 2) {
+//        HAL_TIM_Base_Stop_IT(&htim7);
+//        HAL_TIM_Base_Stop_IT(&htim12);
+//        GPIOB->BSRR = (uint32_t)GPIO_PIN_15 << 16U; // Спикер выкл
+//        numSound = 0;
+//    }
 }
 //-----------------Время-------------------------------------------------
 //void TimerManager::handleTIM10() {
@@ -128,9 +128,9 @@ void TimerManager::handleTIM6() {
 void TimerManager::handleTIM5() {
 	Protection::TIM5_Handler();
 }
-void TimerManager::handleTIM11() {
-	MelodyPlayer::handleTimerInterrupt();
-}
+//void TimerManager::handleTIM11() {
+//	MelodyPlayer::handleTimerInterrupt();
+//}
 //---------------------EXTIManager-----------------------------
 void EXTIManager::handleEXTIInterrupt(uint16_t GPIO_Pin) {
 	(GPIO_Pin == GPIO_PIN_2 && (handleGPIO2(), true)) ||
@@ -138,7 +138,7 @@ void EXTIManager::handleEXTIInterrupt(uint16_t GPIO_Pin) {
 	(GPIO_Pin == GPIO_PIN_15 && (handleGPIO15(), true));
 }
 void EXTIManager::handleGPIO2() {
-	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2);
+	//__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2);
     HAL_NVIC_DisableIRQ(EXTI2_IRQn);
     Button::isEncDone(true);
 }

@@ -103,21 +103,20 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
+  MX_ADC2_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
+  MX_TIM5_Init();
   MX_TIM6_Init();
+  MX_TIM10_Init();
+  MX_TIM12_Init();
+  MX_SPI3_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-  MX_TIM10_Init();
-  MX_TIM7_Init();
-  MX_SPI3_Init();
   MX_USART3_UART_Init();
-  MX_TIM9_Init();
-  MX_TIM12_Init();
-  MX_IWDG_Init();
-  MX_ADC2_Init();
-  MX_TIM11_Init();
-  MX_TIM4_Init();
+ // MX_IWDG_Init();
+
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 	LL_SPI_Enable(SPI3);
@@ -210,7 +209,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 //HAL_TIM_Base_Start_IT(&htim7);
 HAL_Delay(500);
-HAL_TIM_Base_Stop_IT(&htim7);
+//HAL_TIM_Base_Stop_IT(&htim7);
 GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 //Button button;
 //Control control;
@@ -218,9 +217,12 @@ GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 MelodyPlayer::playPodmoskovnye();
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
 GPIOB->BSRR = GPIO_PIN_9;
+GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
+MelodyPlayer::playPodmoskovnye();
 	}
 
 while (1) {
+	        MelodyPlayer::processNextNoteAsync(); // Проверка и смена нот без пауз
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
 			Fram::elementFram(1, modeCookAveADC);
@@ -234,7 +236,7 @@ while (1) {
 			buf_485[11] = modeCookAveADC;
 			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей
 			HAL_Delay(100);			//Без этой паузы дисплей не успевает
-			HAL_IWDG_Refresh(&hiwdg); //Обнуляем watchdog
+			//HAL_IWDG_Refresh(&hiwdg); //Обнуляем watchdog
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

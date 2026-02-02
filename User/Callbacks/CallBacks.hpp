@@ -28,7 +28,7 @@ private:
     void handleTIM10();
     void handleTIM6();
     void handleTIM5();
-    void handleTIM11();
+    //void handleTIM11();
 
     using TimerHandler = void (TimerManager::*)(); // Указатель на метод класса
 

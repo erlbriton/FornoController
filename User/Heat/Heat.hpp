@@ -60,8 +60,8 @@ public:
 //		TIM7->ARR = 9; // Немного изменяю на ходу
 //		TIM7->PSC = 1680; //частоту звука
 //		TIM7->EGR = TIM_EGR_UG; //просто для тренировки
-		HAL_TIM_Base_Start_IT(&htim7);
-		HAL_TIM_Base_Start_IT(&htim12);
+//		HAL_TIM_Base_Start_IT(&htim7);
+//		HAL_TIM_Base_Start_IT(&htim12);
 		return true;
 	}
 //-------------------------------------------------------------------------------
