@@ -24,7 +24,10 @@ void Heat::ajustHeat595(vu8 numberRegimCook) {
 		if (!Heat::checkProtectionTriggers(dataTransmit)) {//Если защиты не сработали
 		TransmitToTENs(dataTransmit);//Посылаем на ТЭНЫ
 		}
-	checkAndPlaySound(Fram::framRD0byte());
+		if((Heat::soundPre==false)&&(Fram::elementFram(1)==1)&&((Fram::framRD0byte()-Control::ovenTemper)<= HysteresisTemp())){
+			Heat::soundPre = true;
+			checkAndPlaySound();
+		}
 	SetTimer::TimeCook(Button::dirTime);
 }
 
@@ -117,9 +120,20 @@ bool Heat::checkProtectionTriggers(vu8 dataTransmit){
 	return false;
 }
 //------------------------------Подаем сигнал предварительного нагрева-------------------------------
-void Heat::checkAndPlaySound(vu8 setTemp) {
-    (Fram::elementFram(1) == 1 && Heat::soundPre == 0 && ((setTemp - Control::ovenTemper) <= HysteresisTemp())) &&
-    		(MelodyPlayer::playPodmoskovnye(),//Играет "Подмосковные вечера"
-            Heat::soundPre = true);//Флаг "Звук предварительного нагрева подан"
-}
-
+void Heat::checkAndPlaySound() {
+                // 4. Если все условия сошлись, запускаем мелодию
+            	GPIOC->BSRR = GPIO_PIN_7;	//HC595 выкл
+            	HAL_TIM_Base_Stop_IT(&htim5);
+            	    HAL_TIM_Base_Stop_IT(&htim6);
+            	    HAL_TIM_Base_Stop(&htim10);
+            	    USART1->CR1 &= ~USART_CR1_UE; // Выключить USART1
+            	        USART2->CR1 &= ~USART_CR1_UE; // Выключить USART2
+            	        USART3->CR1 &= ~USART_CR1_UE; // Выключить USART3
+                MelodyPlayer::playPodmoskovnye();
+                // 5. Устанавливаем флаг, чтобы исключить повторный запуск
+               // Heat::soundPre = true;
+//                HAL_TIM_Base_Start(&htim3);
+//                HAL_TIM_Base_Start_IT(&htim6);
+//                HAL_TIM_Base_Start(&htim10);
+//                GPIOC->BSRR = GPIO_PIN_7 << 16U;//HC595 вкл
+            }

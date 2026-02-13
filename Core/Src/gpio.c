@@ -52,10 +52,10 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, Off_Pin|Latch_Pin|OE_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, Off_Pin|Latch_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, DIR3_Pin|OtherC12_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, DIR3_Pin|OE_Pin|OtherC12_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(FCS_GPIO_Port, FCS_Pin, GPIO_PIN_SET);
@@ -135,12 +135,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(Latch_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : OE_Pin OtherC12_Pin */
-  GPIO_InitStruct.Pin = OE_Pin|OtherC12_Pin;
+  /*Configure GPIO pin : OE_Pin */
+  GPIO_InitStruct.Pin = OE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(OE_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Right_in_Pin grill_In_Pin */
   GPIO_InitStruct.Pin = Right_in_Pin|grill_In_Pin;
@@ -152,7 +152,7 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = MR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(MR_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Fan_out_Pin Light_Pin */
@@ -161,6 +161,13 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : OtherC12_Pin */
+  GPIO_InitStruct.Pin = OtherC12_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(OtherC12_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : exti_Enc_2_Pin */
   GPIO_InitStruct.Pin = exti_Enc_2_Pin;

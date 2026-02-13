@@ -33,7 +33,7 @@ const TimerManager::TimerMap TimerManager::timerMap[ ] = {
 	{ TIM4,  &TimerManager::handleTIM4  },
     { TIM5,  &TimerManager::handleTIM5  },
     { TIM6,  &TimerManager::handleTIM6  },
-    { TIM7,  &TimerManager::handleTIM7  },
+    //{ TIM7,  &TimerManager::handleTIM7  },
     { TIM9,  &TimerManager::handleTIM9  },
     { TIM10, &TimerManager::handleTIM10 },
 	//{ TIM11, &TimerManager::handleTIM11 },
@@ -76,9 +76,9 @@ void TimerManager::handleTIM9() {
 //    }
 }
 //-------------------------Параметры звука переключения режимов и кнопки
-void TimerManager::handleTIM7() {
-    GPIOB->BSRR = ((GPIOB->ODR & GPIO_PIN_15) << 16U) | (~GPIOB->ODR & GPIO_PIN_15);
-}
+//void TimerManager::handleTIM7() {
+//    GPIOB->BSRR = ((GPIOB->ODR & GPIO_PIN_15) << 16U) | (~GPIOB->ODR & GPIO_PIN_15);
+//}
 
 void TimerManager::handleTIM12() {
 //    num = 1 - num;

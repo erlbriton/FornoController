@@ -20,7 +20,6 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
-#include "iwdg.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -103,24 +102,23 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
-  MX_ADC2_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
-  MX_TIM4_Init();
-  MX_TIM5_Init();
   MX_TIM6_Init();
-  MX_TIM10_Init();
-  MX_TIM12_Init();
-  MX_SPI3_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_TIM10_Init();
+  MX_SPI3_Init();
   MX_USART3_UART_Init();
- // MX_IWDG_Init();
-
+  MX_TIM12_Init();
+  MX_ADC2_Init();
   MX_TIM5_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Stop_IT(&htim7);
 	LL_SPI_Enable(SPI3);
 	//---------------------Сброс HC595--------------------------------
+
 	GPIOC->BSRR = GPIO_PIN_6; //Latch on
 	GPIOC->BSRR = GPIO_PIN_6 << 16U; //Latch off
 	GPIOA->BSRR = GPIO_PIN_8; //MR on
@@ -136,8 +134,8 @@ int main(void)
 	//HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 	GPIOC->BSRR = GPIO_PIN_4;	//DIR на передачу
 	GPIOA->BSRR = GPIO_PIN_12 << 16U;	//Свет выкл
-	GPIOB->BSRR= GPIO_PIN_7 << 16U;	//HC595 вкл
-	__HAL_DBGMCU_FREEZE_IWDG(); //Останавливаем WatchDog в дебаггере
+	//GPIOA->BSRR= GPIO_PIN_8 << 16U;	//HC595 выкл
+	//__HAL_DBGMCU_FREEZE_IWDG(); //Останавливаем WatchDog в дебаггере
 	TIM2->CNT = 180;
 	Protection::Init();
 	vu8 fram5rd = Fram::elementFram(5); //Читаем из FRAM
@@ -214,15 +212,15 @@ GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 //Button button;
 //Control control;
 //FryModeLambda fryModeLambda;
-MelodyPlayer::playPodmoskovnye();
+//MelodyPlayer::playPodmoskovnye();
 EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
-GPIOB->BSRR = GPIO_PIN_9;
+GPIOB->BSRR = GPIO_PIN_9;//Led
 GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
-MelodyPlayer::playPodmoskovnye();
+//GPIOC->BSRR = GPIO_PIN_7 << 16U; // HC595 вкл
+//MelodyPlayer::playPodmoskovnye();
 	}
 
 while (1) {
-	        MelodyPlayer::processNextNoteAsync(); // Проверка и смена нот без пауз
 			uint16_t modeCookAveADC = control.readAdc(1);//Читаем задатчик режима
 			fryModeLambda.ModeSetLambda(modeCookAveADC);//Задаем режим приготовления (вызов лямбды по индексу)
 			Fram::elementFram(1, modeCookAveADC);
@@ -259,13 +257,6 @@ void SystemClock_Config(void)
 
    /* Wait till HSE is ready */
   while(LL_RCC_HSE_IsReady() != 1)
-  {
-
-  }
-  LL_RCC_LSI_Enable();
-
-   /* Wait till LSI is ready */
-  while(LL_RCC_LSI_IsReady() != 1)
   {
 
   }

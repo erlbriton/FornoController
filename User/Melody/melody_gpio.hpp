@@ -2,6 +2,7 @@
 #define MELODY_GPIO_HPP
 
 #include "main.h"
+#include "tim.h"
 
 // Структура для хранения параметров ноты
 struct Note {
@@ -22,5 +23,13 @@ public:
 
 // Объявление массива нот (сама мелодия будет в .cpp)
 extern const Note podmoskovnye[];
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    void TIM7_Music_Handler(void);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

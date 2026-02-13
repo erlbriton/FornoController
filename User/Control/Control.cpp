@@ -80,6 +80,7 @@ void Control::backInfo() {
 	SetTimer::number_Iterator_Increment = true;//Восстанавливаем второй проход декремента времени
 	FryModeLambda::modeCookOld = modeBack; //Восстанавливаем информацию, что проход по установке режима уже сделан(ПРОВЕРИТЬ)
 	GPIOA->BSRR = GPIO_PIN_12;//Свет
+	GPIOC->BSRR = GPIO_PIN_7 << 16U; // HC595 вкл
 	Heat::ajustHeat595(modeBack);//Запускаем продолжение приготовления.
 }
 

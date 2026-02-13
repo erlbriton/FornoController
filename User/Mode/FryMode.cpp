@@ -36,6 +36,7 @@ void FryModeLambda::firstRegim(vu8 tempFirst) {
 	Fram::elementFram(5, 0);//Сброса во время работы не было
 	Fram::elementFram(0, tempFirst);//Записываем во фрам начальную температуру
 	TIM2->CNT = tempFirst; //Записываем начальную температуру в энкодер
+	Heat::soundPre = false;
 }
 //--------------------------/Записываем номер включенного режима---------------------------------------------
 void FryModeLambda::modeWrite(vu8 modeCookAveADC) {
