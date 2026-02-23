@@ -21,6 +21,7 @@ class TimerManager {// Класс для обработки таймеров
 public:
     void handleTimerInterrupt(TIM_HandleTypeDef* htim);
 private:
+    void handleTIM2();
     void handleTIM4();
     void handleTIM9();
     void handleTIM7();
@@ -48,7 +49,7 @@ class EXTIManager {// Класс для обработки EXTI
 public:
     void handleEXTIInterrupt(vu16 GPIO_Pin);
 private:
-    void handleGPIO2();
+    //void handleGPIO2();
     void handleGPIO14();
     void handleGPIO15();
 };

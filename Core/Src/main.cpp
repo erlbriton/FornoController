@@ -128,9 +128,9 @@ int main(void)
 	HAL_Delay(1000); //Без этой паузы не работает восстановление режима приготовления при пропадании питания
 	HAL_TIM_Base_Start(&htim3);
 	HAL_ADC_Start(&hadc2);
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
+	HAL_TIM_Encoder_Start_IT(&htim2, TIM_CHANNEL_ALL);
 	Sensor_init();
-	HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+	//HAL_NVIC_EnableIRQ(EXTI2_IRQn);
 	//HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 	GPIOC->BSRR = GPIO_PIN_4;	//DIR на передачу
 	GPIOA->BSRR = GPIO_PIN_12 << 16U;	//Свет выкл
@@ -213,7 +213,7 @@ GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 //Control control;
 //FryModeLambda fryModeLambda;
 //MelodyPlayer::playPodmoskovnye();
-EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15
+EXTI->IMR &= ~EXTI_IMR_MR15;//Запрещаем прерывание EXTI15(импульсы тока)
 GPIOB->BSRR = GPIO_PIN_9;//Led
 GPIOB->BSRR = GPIO_PIN_15 << 16U; //Спикер выкл
 //GPIOC->BSRR = GPIO_PIN_7 << 16U; // HC595 вкл
@@ -232,7 +232,10 @@ while (1) {
 			}
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера
 			buf_485[11] = modeCookAveADC;
-			HAL_UART_Transmit_IT(&huart3, buf_485, 20);//Передаем на дисплей
+			if (huart3.gState == HAL_UART_STATE_READY) {
+			    HAL_UART_Transmit_DMA(&huart3, buf_485, 20);
+			}
+			//HAL_UART_Transmit_DMA(&huart3, buf_485, 20);//Передаем на дисплей
 			HAL_Delay(100);			//Без этой паузы дисплей не успевает
 			//HAL_IWDG_Refresh(&hiwdg); //Обнуляем watchdog
     /* USER CODE END WHILE */

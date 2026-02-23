@@ -122,9 +122,6 @@ void Error_Handler(void);
 #define grill_In_GPIO_Port GPIOC
 #define OtherC12_Pin GPIO_PIN_12
 #define OtherC12_GPIO_Port GPIOC
-#define exti_Enc_2_Pin GPIO_PIN_2
-#define exti_Enc_2_GPIO_Port GPIOD
-#define exti_Enc_2_EXTI_IRQn EXTI2_IRQn
 #define Enc_2_Pin GPIO_PIN_3
 #define Enc_2_GPIO_Port GPIOB
 #define MOSI_Pin GPIO_PIN_5

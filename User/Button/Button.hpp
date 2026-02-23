@@ -16,6 +16,8 @@
 class Button {
 private:
 	static inline vu8 encMemory;
+	static inline vu8 encMemoryNew;
+	static inline vu8 byte0Fram;
 	static inline volatile bool encDone = false;//Флаг прокрутки энкодера
 	static const std::array<std::function<void(Button*)>, 3> arrButtonRegim;//Массив элементов типа "std::function<void()>" в контейнере "std::array<>"
 	static inline bool flagButton = false;
