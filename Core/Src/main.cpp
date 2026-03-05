@@ -57,7 +57,8 @@
 
 /* USER CODE BEGIN PV */
 
-vu8 buf_485[20];//Массив для посылки в дисплей
+vu8 buf_485[21];//Массив для посылки в дисплей
+//vu8 buf1_485[20];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -232,8 +233,10 @@ while (1) {
 			}
 			Heat::setOutCooler(); //Вкл-выкл. внешнего кулера
 			buf_485[11] = modeCookAveADC;
+			buf_485[0] = 151;
+			buf_485[20] = 151;
 			if (huart3.gState == HAL_UART_STATE_READY) {
-			    HAL_UART_Transmit_DMA(&huart3, buf_485, 20);
+			    HAL_UART_Transmit_DMA(&huart3, buf_485, 21);
 			}
 			//HAL_UART_Transmit_DMA(&huart3, buf_485, 20);//Передаем на дисплей
 			HAL_Delay(100);			//Без этой паузы дисплей не успевает

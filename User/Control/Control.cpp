@@ -22,8 +22,6 @@ vu32 Control::bakeTemper() {//Измеряем температуру в дух�
 	kVref = ((float) VREF / (float) tVref);
 	ovenTemper = (((0.0814 * tempADC) - 50) * kVref); //Текущая температура в духовке//////////////////////
 	(ovenTemper < 15) && (ovenTemper = 15);//На время наладки
-	buf_485[0] = 151;
-	buf_485[19] = 151;
 	buf_485[5] = ovenTemper % 100 % 10; //Единицы
 	buf_485[6] = ovenTemper % 100 / 10; //Десятки
 	buf_485[7] = ovenTemper / 100; //Сотни
